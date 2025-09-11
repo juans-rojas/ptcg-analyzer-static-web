@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>TDF Analyzer Web</title>
+<style>
+  body { font-family: system-ui, Segoe UI, Arial; margin: 20px; }
+  h1 { margin-bottom: 0; }
+  small { color: #666; }
+  section { margin-top: 28px; }
+  .row { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+  ul.archetype-list { list-style: none; padding: 0; }
+  ul.archetype-list li { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border: 1px solid #ddd; margin: 6px 0; cursor: pointer; }
+  ul.archetype-list li.selected { outline: 2px solid #1976d2; }
+  ul.archetype-list img { width: 32px; height: 32px; object-fit: contain; }
+  table { border-collapse: collapse; margin-top: 10px; width: 100%; }
+  th, td { border: 1px solid #ccc; padding: 6px 8px; text-align: center; }
+  th { background: #f2f2f2; position: sticky; top: 0; z-index: 1; }
+  .scroll { max-height: 460px; overflow: auto; }
+  .player { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 12px; background:#eee; }
+  .controls { display: flex; gap: 8px; flex-wrap: wrap; }
+  .hint { color:#666; font-size: 12px; }
+  .nowrap { white-space: nowrap; }
+</style>
+</head>
+<body>
+<h1>TDF Analyzer Web</h1>
+<small>100% client-side. Tus datos no salen del navegador.</small>
+
+<section>
+  <h2>1. Cargar archivos TDF/XML</h2>
+  <div class="row">
+    <input type="file" id="xmlFiles" accept=".xml,.tdf" multiple>
+    <select id="tournamentSelect" title="Torneo"></select>
+    <span id="tdfSummary" class="hint"></span>
+  </div>
+</section>
+
+<section>
+  <h2>2. Editar arquetipos</h2>
+  <div class="row controls">
+    <input type="text" id="archetypeName" placeholder="Nombre de arquetipo">
+    <input type="file" id="archetypeImage" accept="image/*">
+    <button id="addArchetype">Añadir</button>
+    <button id="removeArchetype">Eliminar seleccionado</button>
+    <button id="saveArchetypes">Descargar JSON</button>
+    <button id="loadArchetypes">Importar JSON</button>
+    <label class="hint"><input type="checkbox" id="persistArchetypes"> Guardar en este navegador</label>
+  </div>
+  <ul id="archetypeList" class="archetype-list"></ul>
+</section>
+
+<section>
+  <h2>3. Asignar arquetipos a jugadores</h2>
+  <div class="row controls">
+    <button id="saveAssignments">Descargar asignaciones</button>
+    <button id="loadAssignments">Importar asignaciones</button>
+    <label class="hint"><input type="checkbox" id="persistAssignments"> Guardar en este navegador</label>
+  </div>
+  <div id="playersContainer"></div>
+</section>
+
+<section>
+  <h2>4. Filtros</h2>
+  <div class="row">
+    <label>División:
+      <select id="divisionFilter">
+        <option value="ALL">Todas</option>
+        <option value="MR">MR</option>
+        <option value="SR">SR</option>
+        <option value="JR">JR</option>
+      </select>
+    </label>
+    <button id="generateMatrix">Generar matriz</button>
+  </div>
+</section>
+
+<section>
+  <h2>5. Matriz de winrates</h2>
+  <div class="scroll">
+    <table id="matrixTable"></table>
+  </div>
+</section>
+
+<section>
+  <h2>6. Ejemplos de partidas</h2>
+  <div class="scroll">
+    <table id="examplesTable"></table>
+  </div>
+</section>
+
+<script>
+// ====== REFERENCIAS DOM ======
+const xmlInput = document.getElementById("xmlFiles");
+const tdfSummary = document.getElementById("tdfSummary");
+const tournamentSelect = document.getElementById("tournamentSelect");
+const listEl = document.getElementById("archetypeList");
+const nameEl = document.getElementById("archetypeName");
+const imgEl  = document.getElementById("archetypeImage");
+const persistArchEl = document.getElementById("persistArchetypes");
+const playersContainer = document.getElementById("playersContainer");
+const persistAssignEl  = document.getElementById("persistAssignments");
+const matrixTable = document.getElementById("matrixTable");
+const divisionFilter = document.getElementById("divisionFilter");
+const examplesTable = document.getElementById("examplesTable");
+
+// ===== Utilidades y modelos =====
+function getDivisionFromLastname(lastname) {
+  if (lastname === "MR") return "MR";
+  if (lastname === "SR") return "SR";
+  if (lastname === "JR") return "JR";
+  return "Unknown";
+}
+function lowestDivision(div1, div2) {
+  const order = { MR:3, SR:2, JR:1 };
+  return (order[div1] || 0) < (order[div2] || 0) ? div1 : div2;
+}
+function getWinrateColor(winrate) {
+  // Reproducción de tu gradiente original en PyQt
+  if (winrate == null) return "rgb(220,220,220)";
+  if (winrate < 0.5) {
+    if (winrate <= 0.4) {
+      const t = winrate / 0.4; // 0..1
+      const r = 255;
+      const g = Math.round(0 + t * 128);
+      const b = Math.round(0 + t * 128);
+      return `rgb(${r},${g},${b})`; // rojo->rosa
+    } else {
+      const t = (winrate - 0.4) / 0.1; // 0..1
+      const r = 255;
+      const g = Math.round(128 + t * (255 - 128));
+      const b = Math.round(128 - t * 128);
+      return `rgb(${r},${g},${b})`; // rosa->amarillo
+    }
+  } else {
+    if (winrate <= 0.6) {
+      const t = (winrate - 0.5) / 0.1; // 0..1
+      const r = Math.round(255 - t * (255 - 128));
+      const g = 255;
+      const b = Math.round(0 + t * 128);
+      return `rgb(${r},${g},${b})`; // amarillo->verde claro
+    } else {
+      const t = (winrate - 0.6) / 0.4; // 0..1
+      const r = Math.round(128 - t * 128);
+      const g = 255;
+      const b = Math.round(128 - t * 128);
+      return `rgb(${r},${g},${b})`; // verde claro->verde
+    }
+  }
+}
+
+class Player {
+  constructor(userid, name, division) {
+    this.userid = userid;
+    this.name = name;
+    this.division = division;
+    this.archetype = null;
+  }
+}
+class Match {
+  constructor(p1, p2, outcome, roundNum, podCat) {
+    this.p1 = p1; this.p2 = p2;
+    this.outcome = outcome;
+    this.roundNum = roundNum;
+    this.podCat = podCat;
+  }
+}
+class TDFData {
+  constructor(fileContent, name="") {
+    this.fileContent = fileContent;
+    this.name = name;
+    this.players = {};
+    this.matches = [];
+  }
+  parseFile() {
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(this.fileContent, "application/xml");
+    const playersNode = xmlDoc.querySelector("players");
+    if (playersNode) {
+      playersNode.querySelectorAll(":scope > player").forEach(p => {
+        const userid = p.getAttribute("userid");
+        const firstname = p.querySelector("firstname")?.textContent || "";
+        const lastname = p.querySelector("lastname")?.textContent || "";
+        const division = getDivisionFromLastname(lastname);
+        this.players[userid] = new Player(userid, `${firstname} ${lastname}`, division);
+      });
+    }
+    const podsNode = xmlDoc.querySelector("pods");
+    if (podsNode) {
+      podsNode.querySelectorAll(":scope > pod").forEach(pod => {
+        const podCat = pod.getAttribute("category") || "";
+        pod.querySelectorAll(":scope > rounds").forEach(rounds => {
+          rounds.querySelectorAll(":scope > round").forEach(round => {
+            const roundNum = round.getAttribute("number") || "";
+            round.querySelectorAll(":scope > matches > match").forEach(match => {
+              const p1 = match.querySelector(":scope > player1")?.getAttribute("userid");
+              const p2 = match.querySelector(":scope > player2")?.getAttribute("userid");
+              if (!p1 || !p2) return;
+              const outcome = match.getAttribute("outcome") || "";
+              this.matches.push(new Match(p1, p2, outcome, roundNum, podCat));
+            });
+          });
+        });
+      });
+    }
+  }
+}
+
+// ===== Estado global =====
+let tdfDataList = []; // [{name, players, matches}]
+let archetypes = [];  // [{name, imageDataUrl|null}]
+let selectedArchIndex = null;
+let playerArchetypeMap = {}; // {userid: archetypeName}
+
+// ===== Helpers persistencia =====
+function saveLocal(key, value, enabled) {
+  if (!enabled) return;
+  localStorage.setItem(key, JSON.stringify(value));
+}
+function loadLocal(key) {
+  const raw = localStorage.getItem(key);
+  if (!raw) return null;
+  try { return JSON.parse(raw); } catch { return null; }
+}
+
+// ===== Carga de archivos =====
+//const xmlInput = document.getElementById("xmlFiles");
+//const tdfSummary = document.getElementById("tdfSummary");
+//const tournamentSelect = document.getElementById("tournamentSelect");
+
+xmlInput.addEventListener("change", (evt) => {
+  const files = Array.from(evt.target.files);
+  tdfDataList = [];
+  tournamentSelect.innerHTML = "";
+  playerArchetypeMap = {}; // limpiar asignaciones al cambiar dataset
+  if (files.length === 0) {
+    tdfSummary.textContent = "";
+    renderPlayers();
+    renderMatrix();
+    renderExamples([]);
+    return;
+  }
+  let pending = files.length;
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const tdf = new TDFData(e.target.result, file.name);
+      tdf.parseFile();
+      tdfDataList.push(tdf);
+      if (--pending === 0) {
+        // Rellenar selector de torneos
+        tdfDataList.forEach((tdf, i) => {
+          const opt = document.createElement("option");
+          opt.value = String(i);
+          opt.textContent = `${i+1}. ${tdf.name || 'Torneo'}`;
+          tournamentSelect.appendChild(opt);
+        });
+        tdfSummary.textContent = `Cargados ${tdfDataList.length} torneos.`;
+        renderPlayers();
+        renderMatrix(); // matriz del primero por defecto
+      }
+    };
+    reader.readAsText(file);
+  });
+});
+
+// ===== Arquetipos (CRUD) =====
+//const listEl = document.getElementById("archetypeList");
+//const nameEl = document.getElementById("archetypeName");
+//const imgEl  = document.getElementById("archetypeImage");
+//const persistArchEl = document.getElementById("persistArchetypes");
+
+(function bootstrapArchetypes() {
+  // Cargar de localStorage si existe
+  const saved = loadLocal("tdf_archetypes");
+  if (saved) archetypes = saved;
+  refreshArchetypeList();
+})();
+
+function refreshArchetypeList() {
+  listEl.innerHTML = "";
+  archetypes.forEach((arch, idx) => {
+    const li = document.createElement("li");
+    li.dataset.index = String(idx);
+    if (Number(idx) === selectedArchIndex) li.classList.add("selected");
+    if (arch.image) {
+      const img = document.createElement("img");
+      img.src = arch.image;
+      img.alt = arch.name;
+      li.appendChild(img);
+    }
+    const nameSpan = document.createElement("span");
+    nameSpan.textContent = arch.name;
+    li.appendChild(nameSpan);
+    li.addEventListener("click", () => {
+      selectedArchIndex = idx;
+      refreshArchetypeList();
+    });
+    listEl.appendChild(li);
+  });
+  // Al cambiar arquetipos, re-render selects de jugadores
+  renderPlayers();
+}
+
+document.getElementById("addArchetype").addEventListener("click", () => {
+  const name = nameEl.value.trim();
+  if (!name || archetypes.some(a => a.name === name)) return;
+  if (imgEl.files.length > 0) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      archetypes.push({ name, image: e.target.result });
+      nameEl.value = ""; imgEl.value = "";
+      saveLocal("tdf_archetypes", archetypes, persistArchEl.checked);
+      refreshArchetypeList();
+    };
+    reader.readAsDataURL(imgEl.files[0]);
+  } else {
+    archetypes.push({ name, image: null });
+    nameEl.value = ""; imgEl.value = "";
+    saveLocal("tdf_archetypes", archetypes, persistArchEl.checked);
+    refreshArchetypeList();
+  }
+});
+
+document.getElementById("removeArchetype").addEventListener("click", () => {
+  if (selectedArchIndex == null) return;
+  const removed = archetypes.splice(selectedArchIndex, 1)[0];
+  // También elimina asignaciones a ese arquetipo
+  Object.keys(playerArchetypeMap).forEach(uid => {
+    if (playerArchetypeMap[uid] === removed.name) delete playerArchetypeMap[uid];
+  });
+  selectedArchIndex = null;
+  saveLocal("tdf_archetypes", archetypes, persistArchEl.checked);
+  refreshArchetypeList();
+});
+
+document.getElementById("saveArchetypes").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(archetypes, null, 2)], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = Object.assign(document.createElement("a"), { href:url, download:"archetypes.json" });
+  a.click(); URL.revokeObjectURL(url);
+});
+
+document.getElementById("loadArchetypes").addEventListener("click", () => {
+  const input = document.createElement("input");
+  input.type = "file"; input.accept = ".json";
+  input.onchange = () => {
+    const file = input.files[0]; if (!file) return;
+    const r = new FileReader();
+    r.onload = e => {
+      try {
+        const data = JSON.parse(e.target.result);
+        // Permitir formato antiguo [ "A", "B" ... ]
+        archetypes = Array.isArray(data) && typeof data[0] === "string"
+          ? data.map(n => ({name:n, image:null}))
+          : data;
+        saveLocal("tdf_archetypes", archetypes, persistArchEl.checked);
+        refreshArchetypeList();
+      } catch { alert("JSON inválido"); }
+    };
+    r.readAsText(file);
+  };
+  input.click();
+});
+
+// ===== Asignación de arquetipos a jugadores =====
+//const playersContainer = document.getElementById("playersContainer");
+//const persistAssignEl  = document.getElementById("persistAssignments");
+
+(function bootstrapAssignments() {
+  const saved = loadLocal("tdf_assignments");
+  if (saved) playerArchetypeMap = saved;
+})();
+
+function allPlayersCurrentTournament() {
+  const idx = Number(tournamentSelect.value || 0);
+  const tdf = tdfDataList[idx];
+  return tdf ? tdf.players : {};
+}
+
+function renderPlayers() {
+  playersContainer.innerHTML = "";
+  const players = allPlayersCurrentTournament();
+  const archNames = archetypes.map(a => a.name);
+  Object.entries(players).forEach(([userid, p]) => {
+    const row = document.createElement("div");
+    row.className = "player";
+    const info = document.createElement("span");
+    info.innerHTML = `<strong>${p.name}</strong> <span class="pill">${p.division}</span> <span class="hint">ID: ${userid}</span>`;
+    const select = document.createElement("select");
+    select.dataset.userid = userid;
+    // primera opción vacía
+    const empty = document.createElement("option");
+    empty.value = ""; empty.textContent = "(sin asignar)";
+    select.appendChild(empty);
+    archNames.forEach(name => {
+      const opt = document.createElement("option");
+      opt.value = name; opt.textContent = name;
+      select.appendChild(opt);
+    });
+    if (playerArchetypeMap[userid]) select.value = playerArchetypeMap[userid];
+    select.addEventListener("change", () => {
+      if (select.value) playerArchetypeMap[userid] = select.value;
+      else delete playerArchetypeMap[userid];
+      saveLocal("tdf_assignments", playerArchetypeMap, persistAssignEl.checked);
+    });
+    row.appendChild(info);
+    row.appendChild(select);
+    playersContainer.appendChild(row);
+  });
+}
+
+document.getElementById("saveAssignments").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(playerArchetypeMap, null, 2)], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = Object.assign(document.createElement("a"), { href:url, download:"player_archetypes.json" });
+  a.click(); URL.revokeObjectURL(url);
+});
+
+document.getElementById("loadAssignments").addEventListener("click", () => {
+  const input = document.createElement("input");
+  input.type = "file"; input.accept = ".json";
+  input.onchange = () => {
+    const file = input.files[0]; if (!file) return;
+    const r = new FileReader();
+    r.onload = e => {
+      try {
+        playerArchetypeMap = JSON.parse(e.target.result);
+        saveLocal("tdf_assignments", playerArchetypeMap, persistAssignEl.checked);
+        renderPlayers();
+      } catch { alert("JSON inválido"); }
+    };
+    r.readAsText(file);
+  };
+  input.click();
+});
+
+tournamentSelect.addEventListener("change", () => {
+  renderPlayers();
+  renderMatrix();
+});
+
+// ===== Matriz de winrates =====
+//const matrixTable = document.getElementById("matrixTable");
+//const divisionFilter = document.getElementById("divisionFilter");
+document.getElementById("generateMatrix").addEventListener("click", renderMatrix);
+
+function computeMatrixData(tdf) {
+  // map: key pairTuple -> stats
+  const stats = new Map();
+  const withMatches = new Set();
+
+  function keyFor(a, b) {
+    return a <= b ? `${a}|||${b}` : `${b}|||${a}`;
+  }
+  function getEntry(a,b) {
+    const k = keyFor(a,b);
+    if (!stats.has(k)) {
+      stats.set(k, { a: k.split("|||")[0], b: k.split("|||")[1],
+        winsA:0, winsB:0, ties:0, mirrors:0, winMatches:0, lossMatches:0, tieMatches:0, samples:[] });
+    }
+    return stats.get(k);
+  }
+
+  const divFilter = divisionFilter.value;
+  // aplicar asignaciones al modelo
+  Object.entries(tdf.players).forEach(([uid, p]) => {
+    p.archetype = playerArchetypeMap[uid] || null;
+  });
+
+  tdf.matches.forEach(m => {
+    const p1 = tdf.players[m.p1], p2 = tdf.players[m.p2];
+    if (!p1 || !p2 || !p1.archetype || !p2.archetype) return;
+
+    const matchDiv = lowestDivision(p1.division, p2.division);
+    if (divFilter !== "ALL" && matchDiv !== divFilter) return;
+
+    withMatches.add(p1.archetype); withMatches.add(p2.archetype);
+
+    if (p1.archetype === p2.archetype) {
+      const e = getEntry(p1.archetype, p2.archetype);
+      e.mirrors += 1;
+      e.samples.push(`${p1.name} vs ${p2.name} (${p1.archetype}) [R${m.roundNum}]`);
+    } else {
+      const e = getEntry(p1.archetype, p2.archetype);
+      if (m.outcome === "1") {
+        // p1 gana
+        if (e.a === p1.archetype) e.winsA++; else e.winsB++;
+        e.winMatches++;
+        e.samples.push(`${p1.name} (${p1.archetype}) beat ${p2.name} (${p2.archetype}) [R${m.roundNum}]`);
+      } else if (m.outcome === "2") {
+        // p2 gana
+        if (e.a === p2.archetype) e.winsA++; else e.winsB++;
+        e.lossMatches++;
+        e.samples.push(`${p2.name} (${p2.archetype}) beat ${p1.name} (${p1.archetype}) [R${m.roundNum}]`);
+      } else if (m.outcome === "3") {
+        e.ties++; e.tieMatches++;
+        e.samples.push(`${p1.name} (${p1.archetype}) tied ${p2.name} (${p2.archetype}) [R${m.roundNum}]`);
+      }
+    }
+  });
+
+  const archs = Array.from(withMatches).sort();
+  return { stats, archs };
+}
+
+function renderMatrix() {
+  matrixTable.innerHTML = "";
+  const idx = Number(tournamentSelect.value || 0);
+  const tdf = tdfDataList[idx];
+  if (!tdf) return;
+
+  const { stats, archs } = computeMatrixData(tdf);
+  if (archs.length === 0) {
+    matrixTable.innerHTML = "<tr><td class='hint'>No hay datos suficientes (asigna arquetipos y aplica filtros).</td></tr>";
+    return;
+  }
+
+  // Header
+  const thead = document.createElement("thead");
+  const hrow = document.createElement("tr");
+  hrow.appendChild(document.createElement("th")); // esquina
+  archs.forEach(a => {
+    const th = document.createElement("th");
+    th.textContent = a;
+    hrow.appendChild(th);
+  });
+  thead.appendChild(hrow);
+  matrixTable.appendChild(thead);
+
+  const tbody = document.createElement("tbody");
+
+  function getEntry(a,b) {
+    const k = a <= b ? `${a}|||${b}` : `${b}|||${a}`;
+    return stats.get(k);
+  }
+
+  archs.forEach(a1 => {
+    const row = document.createElement("tr");
+    const th = document.createElement("th");
+    th.textContent = a1;
+    row.appendChild(th);
+
+    archs.forEach(a2 => {
+      const td = document.createElement("td");
+      td.style.cursor = "pointer";
+      td.dataset.arch1 = a1;
+      td.dataset.arch2 = a2;
+
+      if (a1 === a2) {
+        const e = getEntry(a1, a2);
+        const mirrors = e ? e.mirrors : 0;
+        td.textContent = `${mirrors} mirrors`;
+        td.style.background = "rgb(220,220,220)";
+      } else {
+        const e = getEntry(a1, a2);
+        if (!e) { td.textContent = "0/0\nT: 0/0"; td.style.whiteSpace="pre"; return row.appendChild(td); }
+        const wins = e.a === a1 ? e.winsA : e.winsB;
+        const winLossTotal = e.winMatches + e.lossMatches;
+        const tieTotal = e.tieMatches;
+        const total = winLossTotal + tieTotal;
+        const winrate = winLossTotal ? (wins / winLossTotal) : null;
+        const tierate = total ? (tieTotal / total) : null;
+        td.innerHTML = `<div class="nowrap">${wins}/${winLossTotal} (${winrate!=null?(winrate*100).toFixed(1):"0.0"}%)</div>
+                        <div class="hint">T: ${tieTotal}/${total} (${tierate!=null?(tierate*100).toFixed(1):"0.0"}%)</div>`;
+        td.style.background = getWinrateColor(winrate);
+      }
+
+      td.addEventListener("click", () => showExamplesForCell(a1, a2));
+      row.appendChild(td);
+    });
+
+    tbody.appendChild(row);
+  });
+
+  matrixTable.appendChild(tbody);
+}
+
+// ===== Ejemplos =====
+//const examplesTable = document.getElementById("examplesTable");
+
+function showExamplesForCell(a1, a2) {
+  const idx = Number(tournamentSelect.value || 0);
+  const tdf = tdfDataList[idx];
+  if (!tdf) return;
+
+  // asegurar divisiones y arquetipos aplicados
+  Object.entries(tdf.players).forEach(([uid, p]) => {
+    p.archetype = playerArchetypeMap[uid] || null;
+  });
+  const divFilter = divisionFilter.value;
+
+  const rows = [];
+  tdf.matches.forEach(m => {
+    const p1 = tdf.players[m.p1], p2 = tdf.players[m.p2];
+    if (!p1 || !p2 || !p1.archetype || !p2.archetype) return;
+    const matchDiv = lowestDivision(p1.division, p2.division);
+    if (divFilter !== "ALL" && matchDiv !== divFilter) return;
+
+    if (a1 === a2 && p1.archetype === a1 && p2.archetype === a2) {
+      rows.push([p1.name, p1.archetype, m.p1, p2.name, p2.archetype, m.p2, "Mirror", m.roundNum]);
+    } else {
+      const pair = [p1.archetype, p2.archetype].sort().join("|||");
+      const cellPair = [a1, a2].sort().join("|||");
+      if (pair === cellPair) {
+        let outcome = "Tie";
+        if (m.outcome === "1") outcome = (p1.archetype === a1) ? "Win" : "Loss";
+        if (m.outcome === "2") outcome = (p2.archetype === a1) ? "Win" : "Loss";
+        rows.push([p1.name, p1.archetype, m.p1, p2.name, p2.archetype, m.p2, outcome, m.roundNum]);
+      }
+    }
+  });
+
+  renderExamples(rows);
+}
+
+function renderExamples(rows) {
+  examplesTable.innerHTML = "";
+  const thead = document.createElement("thead");
+  const h = document.createElement("tr");
+  ["Player 1","Archetype 1","ID 1","Player 2","Archetype 2","ID 2","Result","Round"].forEach(t => {
+    const th = document.createElement("th"); th.textContent = t; h.appendChild(th);
+  });
+  thead.appendChild(h); examplesTable.appendChild(thead);
+
+  const tbody = document.createElement("tbody");
+  rows.forEach(r => {
+    const tr = document.createElement("tr");
+    r.forEach(val => {
+      const td = document.createElement("td"); td.textContent = String(val); tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+  examplesTable.appendChild(tbody);
+}
+
+// ===== Generación inicial =====
+renderPlayers();
+renderMatrix();
+renderExamples([]);
+
+// ====== INICIALIZACIÓN ======
+function init() {
+  // Aquí llamas a renderPlayers(), renderMatrix(), etc.
+  renderPlayers();
+  renderMatrix();
+  renderExamples([]);
+}
+init();
+</script>
+</body>
+</html>

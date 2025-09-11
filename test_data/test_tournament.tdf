@@ -1,0 +1,402 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tournament type="3" stage="5" version="1.80" gametype="TRADING_CARD_GAME" mode="TCG1DAY">
+	<data>
+		<name>Test tournament</name>
+		<id></id>
+		<city>City</city>
+		<state></state>
+		<country>Country</country>
+		<roundtime>30</roundtime>
+		<finalsroundtime>75</finalsroundtime>
+		<organizer popid="userid" name="username"/>
+		<startdate>09/06/2025</startdate>
+		<lessswiss>false</lessswiss>
+		<autotablenumber>true</autotablenumber>
+		<overflowtablestart>17</overflowtablestart>
+	</data>
+	<timeelapsed>152</timeelapsed>
+	<players>
+		<player userid="987654321">
+			<firstname>User 10</firstname>
+			<lastname>MR</lastname>
+			<birthdate>02/27/1999</birthdate>
+			<starter>true</starter>
+			<creationdate>09/06/2025 09:29:45</creationdate>
+			<lastmodifieddate>09/06/2025 09:29:45</lastmodifieddate>
+		</player>
+		<player userid="876543219">
+			<firstname>User 11</firstname>
+			<lastname>MR</lastname>
+			<birthdate>02/27/1998</birthdate>
+			<starter>true</starter>
+			<creationdate>09/06/2025 09:29:58</creationdate>
+			<lastmodifieddate>09/06/2025 09:29:58</lastmodifieddate>
+		</player>
+		<player userid="123456789">
+			<firstname>User 1</firstname>
+			<lastname>JR</lastname>
+			<birthdate>02/27/2018</birthdate>
+			<starter>true</starter>
+			<creationdate>09/06/2025 09:26:49</creationdate>
+			<lastmodifieddate>09/06/2025 09:30:46</lastmodifieddate>
+		</player>
+		<player userid="234567891">
+			<firstname>User 2</firstname>
+			<lastname>JR</lastname>
+			<birthdate>02/27/2019</birthdate>
+			<starter>true</starter>
+			<creationdate>09/06/2025 09:27:07</creationdate>
+			<lastmodifieddate>09/06/2025 09:27:07</lastmodifieddate>
+		</player>
+		<player userid="345678912">
+			<firstname>User 3</firstname>
+			<lastname>SR</lastname>
+			<birthdate>02/27/2011</birthdate>
+			<starter>true</starter>
+			<creationdate>09/06/2025 09:27:32</creationdate>
+			<lastmodifieddate>09/06/2025 09:27:32</lastmodifieddate>
+		</player>
+		<player userid="789123456">
+			<firstname>User 7</firstname>
+			<lastname>MR</lastname>
+			<birthdate>02/27/1998</birthdate>
+			<starter>true</starter>
+			<creationdate>09/06/2025 09:28:51</creationdate>
+			<lastmodifieddate>09/06/2025 09:28:51</lastmodifieddate>
+		</player>
+		<player userid="891234567">
+			<firstname>User 8</firstname>
+			<lastname>MR</lastname>
+			<birthdate>02/27/1997</birthdate>
+			<starter>true</starter>
+			<creationdate>09/06/2025 09:29:09</creationdate>
+			<lastmodifieddate>09/06/2025 09:29:09</lastmodifieddate>
+		</player>
+		<player userid="111111111">
+			<firstname>User 13</firstname>
+			<lastname>JR</lastname>
+			<birthdate>02/27/2018</birthdate>
+			<starter>true</starter>
+			<creationdate>09/06/2025 10:02:24</creationdate>
+			<lastmodifieddate>09/06/2025 10:02:24</lastmodifieddate>
+		</player>
+		<player userid="678912345">
+			<firstname>User 6</firstname>
+			<lastname>MR</lastname>
+			<birthdate>02/27/1999</birthdate>
+			<starter>true</starter>
+			<creationdate>09/06/2025 09:28:36</creationdate>
+			<lastmodifieddate>09/06/2025 09:28:36</lastmodifieddate>
+		</player>
+		<player userid="912345678">
+			<firstname>User 9</firstname>
+			<lastname>MR</lastname>
+			<birthdate>02/27/2000</birthdate>
+			<starter>true</starter>
+			<creationdate>09/06/2025 09:29:27</creationdate>
+			<lastmodifieddate>09/06/2025 09:29:27</lastmodifieddate>
+		</player>
+		<player userid="567891234">
+			<firstname>User 5</firstname>
+			<lastname>MR</lastname>
+			<birthdate>02/27/2000</birthdate>
+			<starter>true</starter>
+			<creationdate>09/06/2025 09:28:16</creationdate>
+			<lastmodifieddate>09/06/2025 09:28:16</lastmodifieddate>
+		</player>
+		<player userid="222222222">
+			<firstname>User 14</firstname>
+			<lastname>SR</lastname>
+			<birthdate>02/27/2013</birthdate>
+			<starter>true</starter>
+			<creationdate>09/06/2025 10:02:50</creationdate>
+			<lastmodifieddate>09/06/2025 10:02:50</lastmodifieddate>
+		</player>
+		<player userid="456789123">
+			<firstname>User 4</firstname>
+			<lastname>SR</lastname>
+			<birthdate>02/27/2012</birthdate>
+			<starter>true</starter>
+			<creationdate>09/06/2025 09:27:53</creationdate>
+			<lastmodifieddate>09/06/2025 09:27:53</lastmodifieddate>
+		</player>
+		<player userid="765432198">
+			<firstname>User 12</firstname>
+			<lastname>MR</lastname>
+			<birthdate>02/27/1997</birthdate>
+			<starter>true</starter>
+			<creationdate>09/06/2025 09:30:18</creationdate>
+			<lastmodifieddate>09/06/2025 09:30:18</lastmodifieddate>
+		</player>
+	</players>
+	<pods>
+		<pod category="8" stage="0">
+			<poddata>
+				<startingtable>1</startingtable>
+				<playoff3rd4th>false</playoff3rd4th>
+				<subgroupcount>1</subgroupcount>
+				<additionalrounds>0</additionalrounds>
+			</poddata>
+			<subgroups>
+				<subgroup number="1">
+					<players>
+						<player userid="345678912" />
+						<player userid="111111111" />
+						<player userid="222222222" />
+						<player userid="456789123" />
+						<player userid="234567891" />
+						<player userid="123456789" />
+					</players>
+				</subgroup>
+			</subgroups>
+			<rounds>
+				<round number="1" type="3" stage="6" >
+					<timeleft>1714</timeleft>
+					<pairtime>09/06/2025 10:03:51</pairtime>
+					<starttime>09/06/2025 10:05:11</starttime>
+					<matches>
+						<match outcome="1">
+							<player1 userid="456789123"/>
+							<player2 userid="222222222"/>
+							<timestamp>09/06/2025 10:05:15</timestamp>
+							<tablenumber>1</tablenumber>
+						</match>
+						<match outcome="2">
+							<player1 userid="345678912"/>
+							<player2 userid="111111111"/>
+							<timestamp>09/06/2025 10:05:18</timestamp>
+							<tablenumber>2</tablenumber>
+						</match>
+						<match outcome="3">
+							<player1 userid="234567891"/>
+							<player2 userid="123456789"/>
+							<timestamp>09/06/2025 10:05:22</timestamp>
+							<tablenumber>3</tablenumber>
+						</match>
+					</matches>
+				</round>
+				<round number="2" type="3" stage="6" >
+					<timeleft>1753</timeleft>
+					<pairtime>09/06/2025 10:05:43</pairtime>
+					<starttime>09/06/2025 10:05:50</starttime>
+					<matches>
+						<match outcome="2">
+							<player1 userid="456789123"/>
+							<player2 userid="345678912"/>
+							<timestamp>09/06/2025 10:05:59</timestamp>
+							<tablenumber>1</tablenumber>
+						</match>
+						<match outcome="1">
+							<player1 userid="123456789"/>
+							<player2 userid="222222222"/>
+							<timestamp>09/06/2025 10:05:58</timestamp>
+							<tablenumber>2</tablenumber>
+						</match>
+						<match outcome="3">
+							<player1 userid="111111111"/>
+							<player2 userid="234567891"/>
+							<timestamp>09/06/2025 10:06:01</timestamp>
+							<tablenumber>3</tablenumber>
+						</match>
+					</matches>
+				</round>
+				<round number="3" type="3" stage="8" >
+					<timeleft>1772</timeleft>
+					<pairtime>09/06/2025 10:06:05</pairtime>
+					<starttime>09/06/2025 10:06:09</starttime>
+					<matches>
+						<match outcome="1">
+							<player1 userid="456789123"/>
+							<player2 userid="123456789"/>
+							<timestamp>09/06/2025 10:06:11</timestamp>
+							<tablenumber>1</tablenumber>
+						</match>
+						<match outcome="2">
+							<player1 userid="345678912"/>
+							<player2 userid="234567891"/>
+							<timestamp>09/06/2025 10:06:12</timestamp>
+							<tablenumber>2</tablenumber>
+						</match>
+						<match outcome="3">
+							<player1 userid="222222222"/>
+							<player2 userid="111111111"/>
+							<timestamp>09/06/2025 10:06:14</timestamp>
+							<tablenumber>3</tablenumber>
+						</match>
+					</matches>
+				</round>
+			</rounds>
+		</pod>
+		<pod category="2" stage="0">
+			<poddata>
+				<startingtable>4</startingtable>
+				<playoff3rd4th>false</playoff3rd4th>
+				<subgroupcount>1</subgroupcount>
+				<additionalrounds>0</additionalrounds>
+			</poddata>
+			<subgroups>
+				<subgroup number="1">
+					<players>
+						<player userid="987654321" />
+						<player userid="876543219" />
+						<player userid="789123456" />
+						<player userid="765432198" />
+						<player userid="891234567" />
+						<player userid="678912345" />
+						<player userid="912345678" />
+						<player userid="567891234" />
+					</players>
+				</subgroup>
+			</subgroups>
+			<rounds>
+				<round number="1" type="3" stage="6" >
+					<timeleft>1714</timeleft>
+					<pairtime>09/06/2025 10:03:51</pairtime>
+					<starttime>09/06/2025 10:05:11</starttime>
+					<matches>
+						<match outcome="1">
+							<player1 userid="765432198"/>
+							<player2 userid="891234567"/>
+							<timestamp>09/06/2025 10:05:31</timestamp>
+							<tablenumber>4</tablenumber>
+						</match>
+						<match outcome="2">
+							<player1 userid="987654321"/>
+							<player2 userid="567891234"/>
+							<timestamp>09/06/2025 10:05:33</timestamp>
+							<tablenumber>5</tablenumber>
+						</match>
+						<match outcome="1">
+							<player1 userid="912345678"/>
+							<player2 userid="876543219"/>
+							<timestamp>09/06/2025 10:05:34</timestamp>
+							<tablenumber>6</tablenumber>
+						</match>
+						<match outcome="3">
+							<player1 userid="678912345"/>
+							<player2 userid="789123456"/>
+							<timestamp>09/06/2025 10:05:37</timestamp>
+							<tablenumber>7</tablenumber>
+						</match>
+					</matches>
+				</round>
+				<round number="2" type="3" stage="6" >
+					<timeleft>1753</timeleft>
+					<pairtime>09/06/2025 10:05:43</pairtime>
+					<starttime>09/06/2025 10:05:50</starttime>
+					<matches>
+						<match outcome="2">
+							<player1 userid="765432198"/>
+							<player2 userid="567891234"/>
+							<timestamp>09/06/2025 10:05:52</timestamp>
+							<tablenumber>4</tablenumber>
+						</match>
+						<match outcome="3">
+							<player1 userid="912345678"/>
+							<player2 userid="678912345"/>
+							<timestamp>09/06/2025 10:05:56</timestamp>
+							<tablenumber>5</tablenumber>
+						</match>
+						<match outcome="1">
+							<player1 userid="789123456"/>
+							<player2 userid="891234567"/>
+							<timestamp>09/06/2025 10:05:53</timestamp>
+							<tablenumber>6</tablenumber>
+						</match>
+						<match outcome="2">
+							<player1 userid="876543219"/>
+							<player2 userid="987654321"/>
+							<timestamp>09/06/2025 10:05:54</timestamp>
+							<tablenumber>7</tablenumber>
+						</match>
+					</matches>
+				</round>
+				<round number="3" type="3" stage="8" >
+					<timeleft>1772</timeleft>
+					<pairtime>09/06/2025 10:06:05</pairtime>
+					<starttime>09/06/2025 10:06:09</starttime>
+					<matches>
+						<match outcome="1">
+							<player1 userid="567891234"/>
+							<player2 userid="912345678"/>
+							<timestamp>09/06/2025 10:06:19</timestamp>
+							<tablenumber>4</tablenumber>
+						</match>
+						<match outcome="2">
+							<player1 userid="789123456"/>
+							<player2 userid="765432198"/>
+							<timestamp>09/06/2025 10:06:19</timestamp>
+							<tablenumber>5</tablenumber>
+						</match>
+						<match outcome="2">
+							<player1 userid="987654321"/>
+							<player2 userid="678912345"/>
+							<timestamp>09/06/2025 10:06:20</timestamp>
+							<tablenumber>6</tablenumber>
+						</match>
+						<match outcome="3">
+							<player1 userid="876543219"/>
+							<player2 userid="891234567"/>
+							<timestamp>09/06/2025 10:06:22</timestamp>
+							<tablenumber>7</tablenumber>
+						</match>
+					</matches>
+				</round>
+			</rounds>
+		</pod>
+	</pods>
+	<standings>
+		<pod category="2" type="finished">
+			<player id="567891234" place="1" />
+			<player id="765432198" place="2" />
+			<player id="678912345" place="3" />
+			<player id="912345678" place="4" />
+			<player id="789123456" place="5" />
+			<player id="987654321" place="6" />
+			<player id="891234567" place="7" />
+			<player id="876543219" place="8" />
+		</pod>
+		<pod category="2" type="dnf">
+		</pod>
+		<pod category="1" type="finished">
+			<player id="456789123" place="1" />
+			<player id="345678912" place="2" />
+			<player id="222222222" place="3" />
+		</pod>
+		<pod category="1" type="dnf">
+		</pod>
+		<pod category="0" type="finished">
+			<player id="234567891" place="1" />
+			<player id="111111111" place="2" />
+			<player id="123456789" place="3" />
+		</pod>
+		<pod category="0" type="dnf">
+		</pod>
+	</standings>
+	<finalsoptions>
+		<categorycut key="2">
+			<options>
+				<value>0</value>
+			</options>
+			<cut>0</cut>
+			<playercount>8</playercount>
+			<paired3rd4th>false</paired3rd4th>
+		</categorycut>
+		<categorycut key="1">
+			<options>
+				<value>0</value>
+			</options>
+			<cut>0</cut>
+			<playercount>3</playercount>
+			<paired3rd4th>false</paired3rd4th>
+		</categorycut>
+		<categorycut key="0">
+			<options>
+				<value>0</value>
+			</options>
+			<cut>0</cut>
+			<playercount>3</playercount>
+			<paired3rd4th>false</paired3rd4th>
+		</categorycut>
+	</finalsoptions>
+</tournament>
