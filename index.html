@@ -9,10 +9,15 @@
   small { color: #666; }
   section { margin-top: 28px; }
   .row { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
-  ul.archetype-list { list-style: none; padding: 0; }
-  ul.archetype-list li { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border: 1px solid #ddd; margin: 6px 0; cursor: pointer; }
+  ul.archetype-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 2px;
+  list-style: none;
+  padding: 0;}
+  ul.archetype-list li { display: flex; align-items: center; gap: 1px; padding: 1px 1px; border: 1px solid #ddd; margin: 1px 0; cursor: pointer; }
   ul.archetype-list li.selected { outline: 2px solid #1976d2; }
-  ul.archetype-list img { width: 32px; height: 32px; object-fit: contain; }
+  ul.archetype-list img { width: 60px; height: 60px; object-fit: contain; }
   table { border-collapse: collapse; margin-top: 10px; width: 100%; }
   th, td { border: 1px solid #ccc; padding: 6px 8px; text-align: center; }
   th { background: #f2f2f2; position: sticky; top: 0; z-index: 1; }
@@ -22,6 +27,11 @@
   .controls { display: flex; gap: 8px; flex-wrap: wrap; }
   .hint { color:#666; font-size: 12px; }
   .nowrap { white-space: nowrap; }
+  #playersContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 12px;
+}
 </style>
 </head>
 <body>
@@ -274,8 +284,23 @@ xmlInput.addEventListener("change", (evt) => {
 (function bootstrapArchetypes() {
   // Cargar de localStorage si existe
   const saved = loadLocal("tdf_archetypes");
-  if (saved) archetypes = saved;
-  refreshArchetypeList();
+  if (saved) {
+    archetypes = saved;
+    refreshArchetypeList();
+  } else {
+    // Si no hay en localStorage, intenta cargar desde el servidor
+    fetch('archetypes.json')
+      .then(res => res.ok ? res.json() : Promise.reject())
+      .then(data => {
+        archetypes = Array.isArray(data) && typeof data[0] === "string"
+          ? data.map(n => ({name:n, image:null}))
+          : data;
+        refreshArchetypeList();
+      })
+      .catch(() => {
+        // No existe el archivo en el servidor, no hacer nada
+      });
+  }
 })();
 
 function refreshArchetypeList() {
@@ -640,14 +665,6 @@ renderPlayers();
 renderMatrix();
 renderExamples([]);
 
-// ====== INICIALIZACIÓN ======
-function init() {
-  // Aquí llamas a renderPlayers(), renderMatrix(), etc.
-  renderPlayers();
-  renderMatrix();
-  renderExamples([]);
-}
-init();
 </script>
 </body>
 </html>
