@@ -15,9 +15,49 @@
   gap: 2px;
   list-style: none;
   padding: 0;}
-  ul.archetype-list li { display: flex; align-items: center; gap: 1px; padding: 1px 1px; border: 1px solid #ddd; margin: 1px 0; cursor: pointer; }
-  ul.archetype-list li.selected { outline: 2px solid #1976d2; }
-  ul.archetype-list img { width: 60px; height: 60px; object-fit: contain; }
+  ul.archetype-list li {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  height: 70px;
+  padding: 0;
+  border: 1px solid #ddd;
+  margin: 1px 0;
+  cursor: pointer;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  /* Remove gap for better overlay */
+  gap: 0;
+}
+ul.archetype-list li.selected {
+  outline: 2px solid #1976d2;
+}
+ul.archetype-list li .arch-name {
+  position: relative;
+  z-index: 1;
+  width: 90%;
+  text-align: center;
+  font-weight: bold;
+  color: #fff;
+  padding: 6px 0;
+  margin: 0 auto;
+}
+ul.archetype-list li .arch-name-bg {
+  
+  justify-content: center; /* Centers horizontally */
+  align-items: center; /* Centers vertically */
+  
+  position: absolute;
+  left: 5%;
+  right: 5%;
+  bottom: 20px;
+  height: 28px;
+  background: rgba(0,0,0,0.45);
+  border-radius: 8px;
+  z-index: 0;
+}
   table { border-collapse: collapse; margin-top: 10px; width: 100%; }
   th, td { border: 1px solid #ccc; padding: 6px 8px; text-align: center; }
   th { background: #f2f2f2; position: sticky; top: 0; z-index: 1; }
@@ -310,21 +350,33 @@ function refreshArchetypeList() {
     li.dataset.index = String(idx);
     if (Number(idx) === selectedArchIndex) li.classList.add("selected");
     if (arch.image) {
-      const img = document.createElement("img");
-      img.src = arch.image;
-      img.alt = arch.name;
-      li.appendChild(img);
+      li.style.backgroundImage = `url('${arch.image.replace(/\\/g, "/")}')`;
+    } else {
+      li.style.background = "#eee";
     }
+
+    // Create a container for text and background
+    const textContainer = document.createElement("div");
+    textContainer.className = "arch-name-container";
+
+    // Add background box for text
+    const bg = document.createElement("div");
+    bg.className = "arch-name-bg";
+    textContainer.appendChild(bg);
+
     const nameSpan = document.createElement("span");
+    nameSpan.className = "arch-name";
     nameSpan.textContent = arch.name;
-    li.appendChild(nameSpan);
+    textContainer.appendChild(nameSpan);
+
+    li.appendChild(textContainer);
+
     li.addEventListener("click", () => {
       selectedArchIndex = idx;
       refreshArchetypeList();
     });
     listEl.appendChild(li);
   });
-  // Al cambiar arquetipos, re-render selects de jugadores
   renderPlayers();
 }
 
