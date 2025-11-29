@@ -3,145 +3,211 @@
 <head>
 <meta charset="UTF-8">
 <title>TDF Analyzer Web</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
-  body { font-family: system-ui, Segoe UI, Arial; margin: 20px; }
-  h1 { margin-bottom: 0; }
-  small { color: #666; }
-  section { margin-top: 28px; }
-  .row { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
-  ul.archetype-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 2px;
-  list-style: none;
-  padding: 0;}
-  ul.archetype-list li {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  height: 70px;
-  padding: 0;
-  border: 1px solid #ddd;
-  margin: 1px 0;
-  cursor: pointer;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  /* Remove gap for better overlay */
-  gap: 0;
-}
-ul.archetype-list li.selected {
-  outline: 2px solid #1976d2;
-}
-ul.archetype-list li .arch-name {
-  position: relative;
-  z-index: 1;
-  width: 90%;
-  text-align: center;
-  font-weight: bold;
-  color: #fff;
-  padding: 6px 0;
-  margin: 0 auto;
-}
-ul.archetype-list li .arch-name-bg {
-  
-  justify-content: center; /* Centers horizontally */
-  align-items: center; /* Centers vertically */
-  
-  position: absolute;
-  left: 5%;
-  right: 5%;
-  bottom: 20px;
-  height: 28px;
-  background: rgba(0,0,0,0.45);
-  border-radius: 8px;
-  z-index: 0;
-}
-  table { border-collapse: collapse; margin-top: 10px; width: 100%; }
-  th, td { border: 1px solid #ccc; padding: 6px 8px; text-align: center; }
-  th { background: #f2f2f2; position: sticky; top: 0; z-index: 1; }
-  .scroll { max-height: 460px; overflow: auto; }
-  .player { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
-  .pill { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 12px; background:#eee; }
-  .controls { display: flex; gap: 8px; flex-wrap: wrap; }
-  .hint { color:#666; font-size: 12px; }
-  .nowrap { white-space: nowrap; }
+  body {
+    background-color: #f8f9fa;
+  }
+  .archetype-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 8px;
+    list-style: none;
+    padding: 0;
+  }
+  .archetype-list li {
+    position: relative;
+    height: 90px;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    border: 1px solid #dee2e6;
+  }
+  .archetype-list li.selected {
+    outline: 3px solid #0d6efd;
+  }
+  .archetype-list li .arch-name {
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+    color: #fff;
+    padding: 6px 0;
+    background: rgba(0,0,0,0.55);
+  }
+  .scroll {
+    max-height: 500px;
+    overflow: auto;
+  }
   #playersContainer {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 12px;
-}
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 16px;
+  }
+  .player {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+  }
+  .pill {
+    display: inline-block;
+    padding: 0.25em 0.6em;
+    font-size: .75em;
+    font-weight: 700;
+    line-height: 1;
+    color: #212529;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 0.375rem;
+    background-color: #e9ecef;
+  }
 </style>
 </head>
 <body>
-<h1>TDF Analyzer Web</h1>
-<small>100% client-side. Tus datos no salen del navegador.</small>
 
-<section>
-  <h2>1. Cargar archivos TDF/XML</h2>
-  <div class="row">
-    <input type="file" id="xmlFiles" accept=".xml,.tdf" multiple>
-    <select id="tournamentSelect" title="Torneo"></select>
-    <span id="tdfSummary" class="hint"></span>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">TDF Analyzer Web</a>
+    <span class="navbar-text">
+      100% client-side. Tus datos no salen del navegador.
+    </span>
   </div>
-</section>
+</nav>
 
-<section>
-  <h2>2. Editar arquetipos</h2>
-  <div class="row controls">
-    <input type="text" id="archetypeName" placeholder="Nombre de arquetipo">
-    <input type="file" id="archetypeImage" accept="image/*">
-    <button id="addArchetype">Añadir</button>
-    <button id="removeArchetype">Eliminar seleccionado</button>
-    <button id="saveArchetypes">Descargar JSON</button>
-    <button id="loadArchetypes">Importar JSON</button>
-    <label class="hint"><input type="checkbox" id="persistArchetypes"> Guardar en este navegador</label>
+<main class="container mt-4">
+  <div class="row g-4">
+
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h2>1. Cargar archivos TDF/XML</h2>
+        </div>
+        <div class="card-body">
+          <div class="row align-items-center g-3">
+            <div class="col-md-5">
+              <input type="file" id="xmlFiles" class="form-control" accept=".xml,.tdf" multiple>
+            </div>
+            <div class="col-md-5">
+              <select id="tournamentSelect" class="form-select" title="Torneo"></select>
+            </div>
+            <div class="col-md-2">
+              <span id="tdfSummary" class="form-text"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h2>2. Editar arquetipos</h2>
+        </div>
+        <div class="card-body">
+          <div class="d-flex flex-wrap gap-2 mb-3 align-items-center">
+            <input type="text" id="archetypeName" class="form-control" style="width: 200px;" placeholder="Nombre de arquetipo">
+            <input type="file" id="archetypeImage" class="form-control" style="width: 250px;" accept="image/*">
+            <button id="addArchetype" class="btn btn-primary">Añadir</button>
+            <button id="removeArchetype" class="btn btn-danger">Eliminar</button>
+            <div class="btn-group">
+                <button id="saveArchetypes" class="btn btn-secondary">Descargar JSON</button>
+                <button id="loadArchetypes" class="btn btn-secondary">Importar JSON</button>
+            </div>
+            <div class="form-check form-switch ms-auto">
+              <input class="form-check-input" type="checkbox" role="switch" id="persistArchetypes">
+              <label class="form-check-label" for="persistArchetypes">Guardar en este navegador</label>
+            </div>
+          </div>
+          <ul id="archetypeList" class="archetype-list"></ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h2>3. Asignar arquetipos a jugadores</h2>
+        </div>
+        <div class="card-body">
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                <button id="saveAssignments" class="btn btn-secondary">Descargar asignaciones</button>
+                <button id="loadAssignments" class="btn btn-secondary">Importar asignaciones</button>
+                <div class="form-check form-switch ms-auto">
+                    <input class="form-check-input" type="checkbox" role="switch" id="persistAssignments">
+                    <label class="form-check-label" for="persistAssignments">Guardar en este navegador</label>
+                </div>
+            </div>
+          <div id="playersContainer"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h2>4. Filtros</h2>
+        </div>
+        <div class="card-body">
+          <div class="row align-items-center g-3">
+            <div class="col-md-3">
+              <label for="divisionFilter" class="form-label">División:</label>
+              <select id="divisionFilter" class="form-select">
+                <option value="ALL">Todas</option>
+                <option value="MR">MR</option>
+                <option value="SR">SR</option>
+                <option value="JR">JR</option>
+              </select>
+            </div>
+            <div class="col-md-9">
+              <button id="generateMatrix" class="btn btn-success mt-4">Generar matriz</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h2>5. Matriz de winrates</h2>
+            </div>
+            <div class="card-body">
+                <div class="scroll table-responsive">
+                    <table id="matrixTable" class="table table-bordered table-sm text-center"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h2>6. Ejemplos de partidas</h2>
+            </div>
+            <div class="card-body">
+                <div class="scroll table-responsive">
+                    <table id="examplesTable" class="table table-striped table-sm"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+
   </div>
-  <ul id="archetypeList" class="archetype-list"></ul>
-</section>
+</main>
 
-<section>
-  <h2>3. Asignar arquetipos a jugadores</h2>
-  <div class="row controls">
-    <button id="saveAssignments">Descargar asignaciones</button>
-    <button id="loadAssignments">Importar asignaciones</button>
-    <label class="hint"><input type="checkbox" id="persistAssignments"> Guardar en este navegador</label>
-  </div>
-  <div id="playersContainer"></div>
-</section>
-
-<section>
-  <h2>4. Filtros</h2>
-  <div class="row">
-    <label>División:
-      <select id="divisionFilter">
-        <option value="ALL">Todas</option>
-        <option value="MR">MR</option>
-        <option value="SR">SR</option>
-        <option value="JR">JR</option>
-      </select>
-    </label>
-    <button id="generateMatrix">Generar matriz</button>
-  </div>
-</section>
-
-<section>
-  <h2>5. Matriz de winrates</h2>
-  <div class="scroll">
-    <table id="matrixTable"></table>
-  </div>
-</section>
-
-<section>
-  <h2>6. Ejemplos de partidas</h2>
-  <div class="scroll">
-    <table id="examplesTable"></table>
-  </div>
-</section>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-// ====== REFERENCIAS DOM ======
+// ====== REFERENCIAS DOM ====== 
 const xmlInput = document.getElementById("xmlFiles");
 const tdfSummary = document.getElementById("tdfSummary");
 const tournamentSelect = document.getElementById("tournamentSelect");
@@ -167,37 +233,12 @@ function lowestDivision(div1, div2) {
   return (order[div1] || 0) < (order[div2] || 0) ? div1 : div2;
 }
 function getWinrateColor(winrate) {
-  // Reproducción de tu gradiente original en PyQt
-  if (winrate == null) return "rgb(220,220,220)";
-  if (winrate < 0.5) {
-    if (winrate <= 0.4) {
-      const t = winrate / 0.4; // 0..1
-      const r = 255;
-      const g = Math.round(0 + t * 128);
-      const b = Math.round(0 + t * 128);
-      return `rgb(${r},${g},${b})`; // rojo->rosa
-    } else {
-      const t = (winrate - 0.4) / 0.1; // 0..1
-      const r = 255;
-      const g = Math.round(128 + t * (255 - 128));
-      const b = Math.round(128 - t * 128);
-      return `rgb(${r},${g},${b})`; // rosa->amarillo
-    }
-  } else {
-    if (winrate <= 0.6) {
-      const t = (winrate - 0.5) / 0.1; // 0..1
-      const r = Math.round(255 - t * (255 - 128));
-      const g = 255;
-      const b = Math.round(0 + t * 128);
-      return `rgb(${r},${g},${b})`; // amarillo->verde claro
-    } else {
-      const t = (winrate - 0.6) / 0.4; // 0..1
-      const r = Math.round(128 - t * 128);
-      const g = 255;
-      const b = Math.round(128 - t * 128);
-      return `rgb(${r},${g},${b})`; // verde claro->verde
-    }
-  }
+  // Gradiente de color Bootstrap-like
+  if (winrate == null) return "#f8f9fa";  // Gris claro
+  if (winrate < 0.45) return "#f8d7da";   // Rojo claro (bg-danger-subtle)
+  if (winrate < 0.5) return "#fff3cd";    // Amarillo claro (bg-warning-subtle)
+  if (winrate < 0.55) return "#cfe2ff";   // Azul claro (bg-primary-subtle)
+  return "#d1e7dd"; // Verde claro (bg-success-subtle)
 }
 
 class Player {
@@ -266,7 +307,11 @@ let playerArchetypeMap = {}; // {userid: archetypeName}
 // ===== Helpers persistencia =====
 function saveLocal(key, value, enabled) {
   if (!enabled) return;
-  localStorage.setItem(key, JSON.stringify(value));
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (e) {
+    console.error("Error saving to local storage", e);
+  }
 }
 function loadLocal(key) {
   const raw = localStorage.getItem(key);
@@ -275,15 +320,11 @@ function loadLocal(key) {
 }
 
 // ===== Carga de archivos =====
-//const xmlInput = document.getElementById("xmlFiles");
-//const tdfSummary = document.getElementById("tdfSummary");
-//const tournamentSelect = document.getElementById("tournamentSelect");
-
 xmlInput.addEventListener("change", (evt) => {
   const files = Array.from(evt.target.files);
   tdfDataList = [];
-  tournamentSelect.innerHTML = "";
-  playerArchetypeMap = {}; // limpiar asignaciones al cambiar dataset
+  tournamentSelect.innerHTML = '<option value="">Seleccione un torneo</option>';
+  playerArchetypeMap = {};
   if (files.length === 0) {
     tdfSummary.textContent = "";
     renderPlayers();
@@ -299,7 +340,6 @@ xmlInput.addEventListener("change", (evt) => {
       tdf.parseFile();
       tdfDataList.push(tdf);
       if (--pending === 0) {
-        // Rellenar selector de torneos
         tdfDataList.forEach((tdf, i) => {
           const opt = document.createElement("option");
           opt.value = String(i);
@@ -307,8 +347,9 @@ xmlInput.addEventListener("change", (evt) => {
           tournamentSelect.appendChild(opt);
         });
         tdfSummary.textContent = `Cargados ${tdfDataList.length} torneos.`;
+        if(tdfDataList.length > 0) tournamentSelect.value = "0";
         renderPlayers();
-        renderMatrix(); // matriz del primero por defecto
+        renderMatrix(); 
       }
     };
     reader.readAsText(file);
@@ -316,73 +357,66 @@ xmlInput.addEventListener("change", (evt) => {
 });
 
 // ===== Arquetipos (CRUD) =====
-//const listEl = document.getElementById("archetypeList");
-//const nameEl = document.getElementById("archetypeName");
-//const imgEl  = document.getElementById("archetypeImage");
-//const persistArchEl = document.getElementById("persistArchetypes");
-
 (function bootstrapArchetypes() {
-  // Cargar de localStorage si existe
-  const saved = loadLocal("tdf_archetypes");
-  if (saved) {
+  persistArchEl.checked = !!loadLocal("tdf_persist_arch");
+  persistArchEl.addEventListener("change", () => saveLocal("tdf_persist_arch", persistArchEl.checked, true));
+  
+  const saved = persistArchEl.checked ? loadLocal("tdf_archetypes") : null;
+  if (saved && saved.length > 0) {
     archetypes = saved;
     refreshArchetypeList();
   } else {
-    // Si no hay en localStorage, intenta cargar desde el servidor
     fetch('archetypes.json')
       .then(res => res.ok ? res.json() : Promise.reject())
       .then(data => {
-        archetypes = Array.isArray(data) && typeof data[0] === "string"
+        archetypes = (Array.isArray(data) && typeof data[0] === "string")
           ? data.map(n => ({name:n, image:null}))
           : data;
         refreshArchetypeList();
       })
-      .catch(() => {
-        // No existe el archivo en el servidor, no hacer nada
-      });
+      .catch(() => { /* No-op */ });
   }
 })();
 
 function refreshArchetypeList() {
   listEl.innerHTML = "";
+  archetypes.sort((a, b) => a.name.localeCompare(b.name));
   archetypes.forEach((arch, idx) => {
     const li = document.createElement("li");
     li.dataset.index = String(idx);
     if (Number(idx) === selectedArchIndex) li.classList.add("selected");
-    if (arch.image) {
-      li.style.backgroundImage = `url('${arch.image.replace(/\\/g, "/")}')`;
-    } else {
-      li.style.background = "#eee";
+    
+    let imagePath = arch.image;
+    // Heuristic to check if it's a local server path vs a data URL
+    if (imagePath && !imagePath.startsWith('data:image')) {
+        // Assuming a flat structure for archetype_images
+        const imageName = imagePath.split(/[\\/]/).pop();
+        imagePath = `archetype_images/${imageName}`;
     }
-
-    // Create a container for text and background
-    const textContainer = document.createElement("div");
-    textContainer.className = "arch-name-container";
-
-    // Add background box for text
-    const bg = document.createElement("div");
-    bg.className = "arch-name-bg";
-    textContainer.appendChild(bg);
+    
+    li.style.backgroundImage = imagePath ? `url('${imagePath.replace(/\\/g, "/")}')` : 'none';
+    li.style.backgroundColor = imagePath ? '#6c757d' : '#e9ecef';
 
     const nameSpan = document.createElement("span");
     nameSpan.className = "arch-name";
     nameSpan.textContent = arch.name;
-    textContainer.appendChild(nameSpan);
-
-    li.appendChild(textContainer);
+    li.appendChild(nameSpan);
 
     li.addEventListener("click", () => {
-      selectedArchIndex = idx;
+      selectedArchIndex = (selectedArchIndex === idx) ? null : idx; // Toggle selection
       refreshArchetypeList();
     });
     listEl.appendChild(li);
   });
-  renderPlayers();
+  renderPlayers(); // Re-render players to update dropdowns if archetypes change
 }
 
 document.getElementById("addArchetype").addEventListener("click", () => {
   const name = nameEl.value.trim();
-  if (!name || archetypes.some(a => a.name === name)) return;
+  if (!name || archetypes.some(a => a.name === name)) {
+    alert("El nombre del arquetipo no puede estar vacío o duplicado.");
+    return;
+  }
   if (imgEl.files.length > 0) {
     const reader = new FileReader();
     reader.onload = e => {
@@ -403,12 +437,12 @@ document.getElementById("addArchetype").addEventListener("click", () => {
 document.getElementById("removeArchetype").addEventListener("click", () => {
   if (selectedArchIndex == null) return;
   const removed = archetypes.splice(selectedArchIndex, 1)[0];
-  // También elimina asignaciones a ese arquetipo
   Object.keys(playerArchetypeMap).forEach(uid => {
     if (playerArchetypeMap[uid] === removed.name) delete playerArchetypeMap[uid];
   });
   selectedArchIndex = null;
   saveLocal("tdf_archetypes", archetypes, persistArchEl.checked);
+  saveLocal("tdf_assignments", playerArchetypeMap, persistAssignEl.checked);
   refreshArchetypeList();
 });
 
@@ -416,20 +450,21 @@ document.getElementById("saveArchetypes").addEventListener("click", () => {
   const blob = new Blob([JSON.stringify(archetypes, null, 2)], {type:"application/json"});
   const url = URL.createObjectURL(blob);
   const a = Object.assign(document.createElement("a"), { href:url, download:"archetypes.json" });
-  a.click(); URL.revokeObjectURL(url);
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 });
 
 document.getElementById("loadArchetypes").addEventListener("click", () => {
-  const input = document.createElement("input");
-  input.type = "file"; input.accept = ".json";
+  const input = Object.assign(document.createElement("input"), { type: "file", accept: ".json" });
   input.onchange = () => {
     const file = input.files[0]; if (!file) return;
     const r = new FileReader();
     r.onload = e => {
       try {
         const data = JSON.parse(e.target.result);
-        // Permitir formato antiguo [ "A", "B" ... ]
-        archetypes = Array.isArray(data) && typeof data[0] === "string"
+        archetypes = (Array.isArray(data) && typeof data[0] === "string")
           ? data.map(n => ({name:n, image:null}))
           : data;
         saveLocal("tdf_archetypes", archetypes, persistArchEl.checked);
@@ -442,16 +477,17 @@ document.getElementById("loadArchetypes").addEventListener("click", () => {
 });
 
 // ===== Asignación de arquetipos a jugadores =====
-//const playersContainer = document.getElementById("playersContainer");
-//const persistAssignEl  = document.getElementById("persistAssignments");
-
 (function bootstrapAssignments() {
-  const saved = loadLocal("tdf_assignments");
+  persistAssignEl.checked = !!loadLocal("tdf_persist_assign");
+  persistAssignEl.addEventListener("change", () => saveLocal("tdf_persist_assign", persistAssignEl.checked, true));
+
+  const saved = persistAssignEl.checked ? loadLocal("tdf_assignments") : null;
   if (saved) playerArchetypeMap = saved;
 })();
 
 function allPlayersCurrentTournament() {
-  const idx = Number(tournamentSelect.value || 0);
+  const idx = Number(tournamentSelect.value);
+  if (isNaN(idx) || idx < 0 || idx >= tdfDataList.length) return {};
   const tdf = tdfDataList[idx];
   return tdf ? tdf.players : {};
 }
@@ -460,28 +496,36 @@ function renderPlayers() {
   playersContainer.innerHTML = "";
   const players = allPlayersCurrentTournament();
   const archNames = archetypes.map(a => a.name);
-  Object.entries(players).forEach(([userid, p]) => {
+  // Sort players by name
+  const sortedPlayers = Object.values(players).sort((a,b) => a.name.localeCompare(b.name));
+
+  sortedPlayers.forEach(p => {
     const row = document.createElement("div");
     row.className = "player";
-    const info = document.createElement("span");
-    info.innerHTML = `<strong>${p.name}</strong> <span class="pill">${p.division}</span> <span class="hint">ID: ${userid}</span>`;
+    
+    const info = document.createElement("div");
+    info.innerHTML = `<strong>${p.name}</strong> <span class="pill">${p.division}</span> <small class="text-muted ms-2">ID: ${p.userid}</small>`;
+    
     const select = document.createElement("select");
-    select.dataset.userid = userid;
-    // primera opción vacía
-    const empty = document.createElement("option");
-    empty.value = ""; empty.textContent = "(sin asignar)";
-    select.appendChild(empty);
+    select.className = "form-select form-select-sm";
+    select.style.width = "180px";
+    select.dataset.userid = p.userid;
+    select.innerHTML = '<option value="">(sin asignar)</option>'; // Empty option first
+    
     archNames.forEach(name => {
       const opt = document.createElement("option");
       opt.value = name; opt.textContent = name;
       select.appendChild(opt);
     });
-    if (playerArchetypeMap[userid]) select.value = playerArchetypeMap[userid];
+
+    if (playerArchetypeMap[p.userid]) select.value = playerArchetypeMap[p.userid];
+    
     select.addEventListener("change", () => {
-      if (select.value) playerArchetypeMap[userid] = select.value;
-      else delete playerArchetypeMap[userid];
+      if (select.value) playerArchetypeMap[p.userid] = select.value;
+      else delete playerArchetypeMap[p.userid];
       saveLocal("tdf_assignments", playerArchetypeMap, persistAssignEl.checked);
     });
+    
     row.appendChild(info);
     row.appendChild(select);
     playersContainer.appendChild(row);
@@ -492,12 +536,14 @@ document.getElementById("saveAssignments").addEventListener("click", () => {
   const blob = new Blob([JSON.stringify(playerArchetypeMap, null, 2)], {type:"application/json"});
   const url = URL.createObjectURL(blob);
   const a = Object.assign(document.createElement("a"), { href:url, download:"player_archetypes.json" });
-  a.click(); URL.revokeObjectURL(url);
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 });
 
 document.getElementById("loadAssignments").addEventListener("click", () => {
-  const input = document.createElement("input");
-  input.type = "file"; input.accept = ".json";
+  const input = Object.assign(document.createElement("input"), { type: "file", accept: ".json" });
   input.onchange = () => {
     const file = input.files[0]; if (!file) return;
     const r = new FileReader();
@@ -516,32 +562,29 @@ document.getElementById("loadAssignments").addEventListener("click", () => {
 tournamentSelect.addEventListener("change", () => {
   renderPlayers();
   renderMatrix();
+  renderExamples([]);
 });
 
 // ===== Matriz de winrates =====
-//const matrixTable = document.getElementById("matrixTable");
-//const divisionFilter = document.getElementById("divisionFilter");
 document.getElementById("generateMatrix").addEventListener("click", renderMatrix);
+divisionFilter.addEventListener("change", renderMatrix);
+
 
 function computeMatrixData(tdf) {
-  // map: key pairTuple -> stats
   const stats = new Map();
   const withMatches = new Set();
 
-  function keyFor(a, b) {
-    return a <= b ? `${a}|||${b}` : `${b}|||${a}`;
-  }
+  function keyFor(a, b) { return a <= b ? `${a}|||${b}` : `${b}|||${a}`; }
   function getEntry(a,b) {
     const k = keyFor(a,b);
     if (!stats.has(k)) {
       stats.set(k, { a: k.split("|||")[0], b: k.split("|||")[1],
-        winsA:0, winsB:0, ties:0, mirrors:0, winMatches:0, lossMatches:0, tieMatches:0, samples:[] });
+        winsA:0, winsB:0, ties:0, mirrors:0, samples:[] });
     }
     return stats.get(k);
   }
 
   const divFilter = divisionFilter.value;
-  // aplicar asignaciones al modelo
   Object.entries(tdf.players).forEach(([uid, p]) => {
     p.archetype = playerArchetypeMap[uid] || null;
   });
@@ -557,56 +600,41 @@ function computeMatrixData(tdf) {
 
     if (p1.archetype === p2.archetype) {
       const e = getEntry(p1.archetype, p2.archetype);
-      e.mirrors += 1;
-      e.samples.push(`${p1.name} vs ${p2.name} (${p1.archetype}) [R${m.roundNum}]`);
+      e.mirrors++;
     } else {
       const e = getEntry(p1.archetype, p2.archetype);
-      if (m.outcome === "1") {
-        // p1 gana
-        if (e.a === p1.archetype) e.winsA++; else e.winsB++;
-        e.winMatches++;
-        e.samples.push(`${p1.name} (${p1.archetype}) beat ${p2.name} (${p2.archetype}) [R${m.roundNum}]`);
-      } else if (m.outcome === "2") {
-        // p2 gana
-        if (e.a === p2.archetype) e.winsA++; else e.winsB++;
-        e.lossMatches++;
-        e.samples.push(`${p2.name} (${p2.archetype}) beat ${p1.name} (${p1.archetype}) [R${m.roundNum}]`);
-      } else if (m.outcome === "3") {
-        e.ties++; e.tieMatches++;
-        e.samples.push(`${p1.name} (${p1.archetype}) tied ${p2.name} (${p2.archetype}) [R${m.roundNum}]`);
-      }
+      if (m.outcome === "1") e.a === p1.archetype ? e.winsA++ : e.winsB++;
+      else if (m.outcome === "2") e.b === p1.archetype ? e.winsA++ : e.winsB++;
+      else if (m.outcome === "3") e.ties++;
     }
   });
-
+  
   const archs = Array.from(withMatches).sort();
   return { stats, archs };
 }
 
 function renderMatrix() {
   matrixTable.innerHTML = "";
-  const idx = Number(tournamentSelect.value || 0);
+  const idx = Number(tournamentSelect.value);
+  if (isNaN(idx) || idx < 0 || idx >= tdfDataList.length) {
+      matrixTable.innerHTML = "<thead><tr><th class='text-muted fw-normal'>Selecciona un torneo para ver la matriz.</th></tr></thead>";
+      return;
+  }
   const tdf = tdfDataList[idx];
-  if (!tdf) return;
 
   const { stats, archs } = computeMatrixData(tdf);
   if (archs.length === 0) {
-    matrixTable.innerHTML = "<tr><td class='hint'>No hay datos suficientes (asigna arquetipos y aplica filtros).</td></tr>";
+    matrixTable.innerHTML = "<thead><tr><th class='text-muted fw-normal'>No hay datos suficientes (asigna arquetipos y aplica filtros).</th></tr></thead>";
+    renderExamples([]);
     return;
   }
 
-  // Header
-  const thead = document.createElement("thead");
-  const hrow = document.createElement("tr");
-  hrow.appendChild(document.createElement("th")); // esquina
-  archs.forEach(a => {
-    const th = document.createElement("th");
-    th.textContent = a;
-    hrow.appendChild(th);
-  });
-  thead.appendChild(hrow);
-  matrixTable.appendChild(thead);
+  const thead = matrixTable.createTHead();
+  const hrow = thead.insertRow();
+  hrow.insertCell().outerHTML = "<th></th>";
+  archs.forEach(a => hrow.insertCell().outerHTML = `<th class="text-truncate" style="max-width: 150px;">${a}</th>`);
 
-  const tbody = document.createElement("tbody");
+  const tbody = matrixTable.createTBody();
 
   function getEntry(a,b) {
     const k = a <= b ? `${a}|||${b}` : `${b}|||${a}`;
@@ -614,55 +642,51 @@ function renderMatrix() {
   }
 
   archs.forEach(a1 => {
-    const row = document.createElement("tr");
-    const th = document.createElement("th");
-    th.textContent = a1;
-    row.appendChild(th);
+    const row = tbody.insertRow();
+    row.insertCell().outerHTML = `<th class="text-truncate" style="max-width: 150px;">${a1}</th>`;
 
     archs.forEach(a2 => {
-      const td = document.createElement("td");
+      const td = row.insertCell();
       td.style.cursor = "pointer";
       td.dataset.arch1 = a1;
       td.dataset.arch2 = a2;
 
       if (a1 === a2) {
         const e = getEntry(a1, a2);
-        const mirrors = e ? e.mirrors : 0;
-        td.textContent = `${mirrors} mirrors`;
-        td.style.background = "rgb(220,220,220)";
+        td.textContent = e ? `${e.mirrors}m` : '0m';
+        td.style.backgroundColor = "#e9ecef";
+        td.title = `${e ? e.mirrors : 0} mirrors`;
       } else {
         const e = getEntry(a1, a2);
-        if (!e) { td.textContent = "0/0\nT: 0/0"; td.style.whiteSpace="pre"; return row.appendChild(td); }
-        const wins = e.a === a1 ? e.winsA : e.winsB;
-        const winLossTotal = e.winMatches + e.lossMatches;
-        const tieTotal = e.tieMatches;
-        const total = winLossTotal + tieTotal;
-        const winrate = winLossTotal ? (wins / winLossTotal) : null;
-        const tierate = total ? (tieTotal / total) : null;
-        td.innerHTML = `<div class="nowrap">${wins}/${winLossTotal} (${winrate!=null?(winrate*100).toFixed(1):"0.0"}%)</div>
-                        <div class="hint">T: ${tieTotal}/${total} (${tierate!=null?(tierate*100).toFixed(1):"0.0"}%)</div>`;
-        td.style.background = getWinrateColor(winrate);
+        if (!e) { 
+          td.textContent = "0-0-0";
+          td.style.backgroundColor = "#f8f9fa";
+          td.title = "0 wins, 0 losses, 0 ties";
+        } else {
+            const wins = e.a === a1 ? e.winsA : e.winsB;
+            const losses = e.a === a1 ? e.winsB : e.winsA;
+            const ties = e.ties;
+            const total = wins + losses;
+            const winrate = total > 0 ? (wins / total) : null;
+            
+            td.innerHTML = `<div class="fw-bold">${(winrate != null ? (winrate * 100).toFixed(0) : "–")}%</div>
+                            <small class="text-muted">${wins}-${losses}-${ties}</small>`;
+            td.style.backgroundColor = getWinrateColor(winrate);
+            td.title = `${wins} wins, ${losses} losses, ${ties} ties`;
+        }
       }
 
       td.addEventListener("click", () => showExamplesForCell(a1, a2));
-      row.appendChild(td);
     });
-
-    tbody.appendChild(row);
   });
-
-  matrixTable.appendChild(tbody);
 }
 
 // ===== Ejemplos =====
-//const examplesTable = document.getElementById("examplesTable");
-
 function showExamplesForCell(a1, a2) {
-  const idx = Number(tournamentSelect.value || 0);
+  const idx = Number(tournamentSelect.value);
+  if (isNaN(idx) || idx < 0 || idx >= tdfDataList.length) return;
   const tdf = tdfDataList[idx];
-  if (!tdf) return;
 
-  // asegurar divisiones y arquetipos aplicados
   Object.entries(tdf.players).forEach(([uid, p]) => {
     p.archetype = playerArchetypeMap[uid] || null;
   });
@@ -675,48 +699,61 @@ function showExamplesForCell(a1, a2) {
     const matchDiv = lowestDivision(p1.division, p2.division);
     if (divFilter !== "ALL" && matchDiv !== divFilter) return;
 
-    if (a1 === a2 && p1.archetype === a1 && p2.archetype === a2) {
-      rows.push([p1.name, p1.archetype, m.p1, p2.name, p2.archetype, m.p2, "Mirror", m.roundNum]);
+    if (a1 === a2) {
+        if (p1.archetype === a1 && p2.archetype === a2) {
+            let result = "Tie";
+            if (m.outcome === "1") result = "P1 Win";
+            if (m.outcome === "2") result = "P2 Win";
+            rows.push([p1.name, p1.archetype, p2.name, p2.archetype, result, m.roundNum]);
+        }
     } else {
-      const pair = [p1.archetype, p2.archetype].sort().join("|||");
-      const cellPair = [a1, a2].sort().join("|||");
-      if (pair === cellPair) {
-        let outcome = "Tie";
-        if (m.outcome === "1") outcome = (p1.archetype === a1) ? "Win" : "Loss";
-        if (m.outcome === "2") outcome = (p2.archetype === a1) ? "Win" : "Loss";
-        rows.push([p1.name, p1.archetype, m.p1, p2.name, p2.archetype, m.p2, outcome, m.roundNum]);
-      }
+        const p1isA1 = p1.archetype === a1;
+        const p2isA2 = p2.archetype === a2;
+        const p1isA2 = p1.archetype === a2;
+        const p2isA1 = p2.archetype === a1;
+
+        if ((p1isA1 && p2isA2) || (p1isA2 && p2isA1)) {
+            let outcomeText = "Tie";
+            if (m.outcome === "1") outcomeText = `${p1.name} Wins`;
+            if (m.outcome === "2") outcomeText = `${p2.name} Wins`;
+            rows.push([p1.name, p1.archetype, p2.name, p2.archetype, outcomeText, m.roundNum]);
+        }
     }
   });
-
-  renderExamples(rows);
+  renderExamples(rows, a1, a2);
 }
 
-function renderExamples(rows) {
+function renderExamples(rows, a1, a2) {
   examplesTable.innerHTML = "";
-  const thead = document.createElement("thead");
-  const h = document.createElement("tr");
-  ["Player 1","Archetype 1","ID 1","Player 2","Archetype 2","ID 2","Result","Round"].forEach(t => {
-    const th = document.createElement("th"); th.textContent = t; h.appendChild(th);
+  const thead = examplesTable.createTHead();
+  const caption = examplesTable.createCaption();
+  caption.classList.add('caption-top', 'h4');
+  caption.textContent = `Partidas de ejemplo: ${a1} vs ${a2}`;
+  
+  const h = thead.insertRow();
+  ["Player 1","Archetype 1","Player 2","Archetype 2","Result","Round"].forEach(t => {
+    h.insertCell().outerHTML = `<th>${t}</th>`;
   });
-  thead.appendChild(h); examplesTable.appendChild(thead);
-
-  const tbody = document.createElement("tbody");
-  rows.forEach(r => {
-    const tr = document.createElement("tr");
-    r.forEach(val => {
-      const td = document.createElement("td"); td.textContent = String(val); tr.appendChild(td);
+  
+  const tbody = examplesTable.createTBody();
+  if (rows.length === 0) {
+    const tr = tbody.insertRow();
+    const td = tr.insertCell();
+    td.colSpan = 6;
+    td.textContent = "No hay ejemplos para esta combinación de filtros.";
+    td.classList.add("text-center", "text-muted");
+  } else {
+    rows.forEach(r => {
+        const tr = tbody.insertRow();
+        r.forEach(val => tr.insertCell().textContent = String(val));
     });
-    tbody.appendChild(tr);
-  });
-  examplesTable.appendChild(tbody);
+  }
 }
 
-// ===== Generación inicial =====
+// ===== Initial Render =====
 renderPlayers();
 renderMatrix();
-renderExamples([]);
-
+renderExamples("", "");
 </script>
 </body>
 </html>
