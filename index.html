@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>TDF Analyzer Web</title>
@@ -7,6 +7,15 @@
 <style>
   body {
     background-color: #f8f9fa;
+  }
+  .lang-toggle img {
+    cursor: pointer;
+    width: 30px;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+  .lang-toggle img:hover, .lang-toggle img.active {
+    opacity: 1;
   }
   .archetype-list {
     display: grid;
@@ -77,20 +86,24 @@
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">TDF Analyzer Web</a>
-    <span class="navbar-text">
-      100% client-side. Tus datos no salen del navegador.
+    <a class="navbar-brand" href="#" data-lang-key="title">TDF Analyzer Web</a>
+    <span class="navbar-text" data-lang-key="subtitle">
+      100% client-side. Your data never leaves your browser.
     </span>
+    <div class="d-flex ms-auto lang-toggle">
+        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMTIzNSIgaGVpZ2h0PSI2NTAiIHZpZXdCb3g9IjAgMCA3NDEwIDM5MDAiPjxwYXRoIGQ9Ik0wLDBoNzQxMHYzOTAwSDAiIGZpbGw9IiNiMzE5NDIiLz48cGF0aCBkPSJNMCw0NTBINzQxMG0wLDYwMEgwbTAsNjAwSDc0MTBtMCw2MDBIMG0wLDYwMEg3NDEwbTAsNjAwSDAiIHN0cm9rZT0iI0ZGRiIgc3Ryb2tlLXdpZHRoPSIzMDAiLz48cGF0aCBkPSJNMCwwaDI5NjR2MjEwMEgwIiBmaWxsPSIjMGEzMTYxIi8+PGcgZmlsbD0iI0ZGRiI+PGcgaWQ9InMxOCI+PGcgaWQ9InM5Ij48ZyBpZD0iczUiPjxnIGlkPSJzNCI+PHBhdGggaWQ9InMiIGQ9Ik0yNDcsOTAgMzE3LjUzNDIzMCwzMDcuMDgyMDM5IDEzMi44NzMyMTgsMTcyLjkxNzk2MUgzNjEuMTI2NzgyTDE3Ni40NjU3NzAsMzA3LjA4MjAzOXoiLz48dXNlIHhsaW5rOmhyZWY9IiNzIiB5PSI0MjAiLz48dXNlIHhsaW5rOmhyZWY9IiNzIiB5PSI4NDAiLz48dXNlIHhsaW5rOmhyZWY9IiNzIiB5PSIxMjYwIi8+PC9nPjx1c2UgeGxpbms6aHJlZj0iI3MiIHk9IjE2ODAiLz48L2c+PHVzZSB4bGluazpocmVmPSIjczQiIHg9IjI0NyIgeT0iMjEwIi8+PC9nPjx1c2UgeGxpbms6aHJlZj0iI3M5IiB4PSI0OTQiLz48L2c+PHVzZSB4bGluazpocmVmPSIjczE4IiB4PSI5ODgiLz48dXNlIHhsaW5rOmhyZWY9IiNzOSIgeD0iMTk3NiIvPjx1c2UgeGxpbms6aHJlZj0iI3M1IiB4PSIyNDcwIi8+PC9nPjwvc3ZnPg==" alt="EN" id="lang-en" class="active me-2">
+        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzIDIiIHdpZHRoPSIzMCIgaGVpZ2h0PSIyMCI+CiAgPHJlY3Qgd2lkdGg9IjMiIGhlaWdodD0iMiIgZmlsbD0iI2M2MGExZCIvPgogIDxyZWN0IHdpZHRoPSIzIiBoZWlnaHQ9IjEiIHk9IjAuNSIgZmlsbD0iI2ZmYzQwMCIvPgo8L3N2Zz4=" alt="ES" id="lang-es">
+    </div>
   </div>
 </nav>
 
 <main class="container mt-4">
   <div class="row g-4">
-
+    
     <div class="col-12">
       <div class="card">
         <div class="card-header">
-          <h2>1. Cargar archivos TDF/XML</h2>
+          <h2 data-lang-key="load_files_header">1. Load TDF/XML Files</h2>
         </div>
         <div class="card-body">
           <div class="row align-items-center g-3">
@@ -98,7 +111,7 @@
               <input type="file" id="xmlFiles" class="form-control" accept=".xml,.tdf" multiple>
             </div>
             <div class="col-md-5">
-              <select id="tournamentSelect" class="form-select" title="Torneo"></select>
+              <select id="tournamentSelect" class="form-select" data-lang-title="tournament_select_title"></select>
             </div>
             <div class="col-md-2">
               <span id="tdfSummary" class="form-text"></span>
@@ -111,21 +124,21 @@
     <div class="col-12">
       <div class="card">
         <div class="card-header">
-          <h2>2. Editar arquetipos</h2>
+          <h2 data-lang-key="edit_archetypes_header">2. Edit Archetypes</h2>
         </div>
         <div class="card-body">
           <div class="d-flex flex-wrap gap-2 mb-3 align-items-center">
-            <input type="text" id="archetypeName" class="form-control" style="width: 200px;" placeholder="Nombre de arquetipo">
+            <input type="text" id="archetypeName" class="form-control" style="width: 200px;" data-lang-placeholder="archetype_name_placeholder">
             <input type="file" id="archetypeImage" class="form-control" style="width: 250px;" accept="image/*">
-            <button id="addArchetype" class="btn btn-primary">Añadir</button>
-            <button id="removeArchetype" class="btn btn-danger">Eliminar</button>
+            <button id="addArchetype" class="btn btn-primary" data-lang-key="add_button">Add</button>
+            <button id="removeArchetype" class="btn btn-danger" data-lang-key="remove_button">Remove</button>
             <div class="btn-group">
-                <button id="saveArchetypes" class="btn btn-secondary">Descargar JSON</button>
-                <button id="loadArchetypes" class="btn btn-secondary">Importar JSON</button>
+                <button id="saveArchetypes" class="btn btn-secondary" data-lang-key="download_json_button">Download JSON</button>
+                <button id="loadArchetypes" class="btn btn-secondary" data-lang-key="import_json_button">Import JSON</button>
             </div>
             <div class="form-check form-switch ms-auto">
               <input class="form-check-input" type="checkbox" role="switch" id="persistArchetypes">
-              <label class="form-check-label" for="persistArchetypes">Guardar en este navegador</label>
+              <label class="form-check-label" for="persistArchetypes" data-lang-key="save_in_browser_label">Save in this browser</label>
             </div>
           </div>
           <ul id="archetypeList" class="archetype-list"></ul>
@@ -136,15 +149,15 @@
     <div class="col-12">
       <div class="card">
         <div class="card-header">
-          <h2>3. Asignar arquetipos a jugadores</h2>
+          <h2 data-lang-key="assign_archetypes_header">3. Assign Archetypes to Players</h2>
         </div>
         <div class="card-body">
             <div class="d-flex flex-wrap gap-2 mb-3">
-                <button id="saveAssignments" class="btn btn-secondary">Descargar asignaciones</button>
-                <button id="loadAssignments" class="btn btn-secondary">Importar asignaciones</button>
+                <button id="saveAssignments" class="btn btn-secondary" data-lang-key="download_assignments_button">Download Assignments</button>
+                <button id="loadAssignments" class="btn btn-secondary" data-lang-key="import_assignments_button">Import Assignments</button>
                 <div class="form-check form-switch ms-auto">
                     <input class="form-check-input" type="checkbox" role="switch" id="persistAssignments">
-                    <label class="form-check-label" for="persistAssignments">Guardar en este navegador</label>
+                    <label class="form-check-label" for="persistAssignments" data-lang-key="save_in_browser_label">Save in this browser</label>
                 </div>
             </div>
           <div id="playersContainer"></div>
@@ -155,21 +168,21 @@
     <div class="col-12">
       <div class="card">
         <div class="card-header">
-          <h2>4. Filtros</h2>
+          <h2 data-lang-key="filters_header">4. Filters</h2>
         </div>
         <div class="card-body">
           <div class="row align-items-center g-3">
             <div class="col-md-3">
-              <label for="divisionFilter" class="form-label">División:</label>
+              <label for="divisionFilter" class="form-label" data-lang-key="division_label">Division:</label>
               <select id="divisionFilter" class="form-select">
-                <option value="ALL">Todas</option>
+                <option value="ALL" data-lang-key="all_option">All</option>
                 <option value="MR">MR</option>
                 <option value="SR">SR</option>
                 <option value="JR">JR</option>
               </select>
             </div>
             <div class="col-md-9">
-              <button id="generateMatrix" class="btn btn-success mt-4">Generar matriz</button>
+              <button id="generateMatrix" class="btn btn-success mt-4" data-lang-key="generate_matrix_button">Generate Matrix</button>
             </div>
           </div>
         </div>
@@ -179,7 +192,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h2>5. Matriz de winrates</h2>
+                <h2 data-lang-key="winrate_matrix_header">5. Winrate Matrix</h2>
             </div>
             <div class="card-body">
                 <div class="scroll table-responsive">
@@ -192,7 +205,7 @@
     <div class="col-12 mb-4">
         <div class="card">
             <div class="card-header">
-                <h2>6. Ejemplos de partidas</h2>
+                <h2 data-lang-key="match_examples_header">6. Match Examples</h2>
             </div>
             <div class="card-body">
                 <div class="scroll table-responsive">
@@ -207,7 +220,153 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-// ====== REFERENCIAS DOM ====== 
+// ====== LANGUAGE & TRANSLATION ======
+const translations = {
+    en: {
+        title: "TDF Analyzer Web",
+        subtitle: "100% client-side. Your data never leaves your browser.",
+        load_files_header: "1. Load TDF/XML Files",
+        tournament_select_title: "Tournament",
+        edit_archetypes_header: "2. Edit Archetypes",
+        archetype_name_placeholder: "Archetype name",
+        add_button: "Add",
+        remove_button: "Remove",
+        download_json_button: "Download JSON",
+        import_json_button: "Import JSON",
+        save_in_browser_label: "Save in this browser",
+        assign_archetypes_header: "3. Assign Archetypes to Players",
+        download_assignments_button: "Download Assignments",
+        import_assignments_button: "Import Assignments",
+        filters_header: "4. Filters",
+        division_label: "Division:",
+        all_option: "All",
+        generate_matrix_button: "Generate Matrix",
+        winrate_matrix_header: "5. Winrate Matrix",
+        match_examples_header: "6. Match Examples",
+        unassigned_option: "(unassigned)",
+        no_data_message: "Not enough data (assign archetypes and apply filters).",
+        select_tournament_placeholder: "Select a tournament",
+        loaded_tournaments_summary: "Loaded {count} tournaments.",
+        invalid_json_alert: "Invalid JSON",
+        duplicate_archetype_alert: "Archetype name cannot be empty or duplicated.",
+        select_tournament_matrix_placeholder: "Select a tournament to see the matrix.",
+        no_examples_message: "No examples for this filter combination.",
+        example_matches_caption: "Example Matches: {a1} vs {a2}",
+        mirrors_title: "{count} mirrors",
+        win_loss_tie_title: "{wins} wins, {losses} losses, {ties} ties",
+        p1_win_result: "P1 Win",
+        p2_win_result: "P2 Win",
+        tie_result: "Tie",
+        player_1_header: "Player 1",
+        archetype_1_header: "Archetype 1",
+        player_2_header: "Player 2",
+        archetype_2_header: "Archetype 2",
+        result_header: "Result",
+        round_header: "Round",
+    },
+    es: {
+        title: "TDF Analyzer Web",
+        subtitle: "100% client-side. Tus datos no salen del navegador.",
+        load_files_header: "1. Cargar archivos TDF/XML",
+        tournament_select_title: "Torneo",
+        edit_archetypes_header: "2. Editar arquetipos",
+        archetype_name_placeholder: "Nombre de arquetipo",
+        add_button: "Añadir",
+        remove_button: "Eliminar",
+        download_json_button: "Descargar JSON",
+        import_json_button: "Importar JSON",
+        save_in_browser_label: "Guardar en este navegador",
+        assign_archetypes_header: "3. Asignar arquetipos a jugadores",
+        download_assignments_button: "Descargar asignaciones",
+        import_assignments_button: "Importar asignaciones",
+        filters_header: "4. Filtros",
+        division_label: "División:",
+        all_option: "Todas",
+        generate_matrix_button: "Generar matriz",
+        winrate_matrix_header: "5. Matriz de winrates",
+        match_examples_header: "6. Ejemplos de partidas",
+        unassigned_option: "(sin asignar)",
+        no_data_message: "No hay datos suficientes (asigna arquetipos y aplica filtros).",
+        select_tournament_placeholder: "Seleccione un torneo",
+        loaded_tournaments_summary: "Cargados {count} torneos.",
+        invalid_json_alert: "JSON inválido",
+        duplicate_archetype_alert: "El nombre del arquetipo no puede estar vacío o duplicado.",
+        select_tournament_matrix_placeholder: "Selecciona un torneo para ver la matriz.",
+        no_examples_message: "No hay ejemplos para esta combinación de filtros.",
+        example_matches_caption: "Partidas de ejemplo: {a1} vs {a2}",
+        mirrors_title: "{count} mirrors",
+        win_loss_tie_title: "{wins} victorias, {losses} derrotas, {ties} empates",
+        p1_win_result: "Gana J1",
+        p2_win_result: "Gana J2",
+        tie_result: "Empate",
+        player_1_header: "Jugador 1",
+        archetype_1_header: "Arquetipo 1",
+        player_2_header: "Jugador 2",
+        archetype_2_header: "Arquetipo 2",
+        result_header: "Resultado",
+        round_header: "Ronda",
+    }
+};
+let currentLang = 'en';
+
+function setLanguage(lang) {
+    if (!translations[lang]) return;
+    currentLang = lang;
+    localStorage.setItem('preferred_language', lang);
+    document.documentElement.lang = lang;
+    
+    document.querySelectorAll('[data-lang-key]').forEach(el => {
+        const key = el.getAttribute('data-lang-key');
+        if (translations[lang][key]) {
+            el.textContent = translations[lang][key];
+        }
+    });
+    document.querySelectorAll('[data-lang-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-lang-placeholder');
+        if (translations[lang][key]) {
+            el.placeholder = translations[lang][key];
+        }
+    });
+    document.querySelectorAll('[data-lang-title]').forEach(el => {
+        const key = el.getAttribute('data-lang-title');
+        if (translations[lang][key]) {
+            el.title = translations[lang][key];
+        }
+    });
+
+    document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+    document.getElementById('lang-es').classList.toggle('active', lang === 'es');
+
+    tournamentSelect.innerHTML = `<option value="">${getTranslation("select_tournament_placeholder")}</option>`;
+    tdfDataList.forEach((tdf, i) => {
+        const opt = document.createElement("option");
+        opt.value = String(i);
+        opt.textContent = `${i+1}. ${tdf.name || getTranslation('tournament_select_title')}`;
+        tournamentSelect.appendChild(opt);
+    });
+    if(tdfDataList.length > 0) {
+        tournamentSelect.value = "0";
+        tdfSummary.textContent = getTranslation('loaded_tournaments_summary', {count: tdfDataList.length});
+    }
+
+    renderPlayers();
+    renderMatrix();
+    renderExamples("",""); 
+}
+
+function getTranslation(key, replacements = {}) {
+    let text = translations[currentLang][key] || translations['en'][key] || key;
+    for (const placeholder in replacements) {
+        text = text.replace(`{${placeholder}}`, replacements[placeholder]);
+    }
+    return text;
+}
+
+document.getElementById('lang-en').addEventListener('click', () => setLanguage('en'));
+document.getElementById('lang-es').addEventListener('click', () => setLanguage('es'));
+
+
+// ====== REFERENCIAS DOM ======
 const xmlInput = document.getElementById("xmlFiles");
 const tdfSummary = document.getElementById("tdfSummary");
 const tournamentSelect = document.getElementById("tournamentSelect");
@@ -233,12 +392,11 @@ function lowestDivision(div1, div2) {
   return (order[div1] || 0) < (order[div2] || 0) ? div1 : div2;
 }
 function getWinrateColor(winrate) {
-  // Gradiente de color Bootstrap-like
-  if (winrate == null) return "#f8f9fa";  // Gris claro
-  if (winrate < 0.45) return "#f8d7da";   // Rojo claro (bg-danger-subtle)
-  if (winrate < 0.5) return "#fff3cd";    // Amarillo claro (bg-warning-subtle)
-  if (winrate < 0.55) return "#cfe2ff";   // Azul claro (bg-primary-subtle)
-  return "#d1e7dd"; // Verde claro (bg-success-subtle)
+  if (winrate == null) return "#f8f9fa";
+  if (winrate < 0.45) return "#f8d7da";
+  if (winrate < 0.5) return "#fff3cd";
+  if (winrate < 0.55) return "#cfe2ff";
+  return "#d1e7dd";
 }
 
 class Player {
@@ -299,10 +457,10 @@ class TDFData {
 }
 
 // ===== Estado global =====
-let tdfDataList = []; // [{name, players, matches}]
-let archetypes = [];  // [{name, imageDataUrl|null}]
+let tdfDataList = [];
+let archetypes = [];
 let selectedArchIndex = null;
-let playerArchetypeMap = {}; // {userid: archetypeName}
+let playerArchetypeMap = {};
 
 // ===== Helpers persistencia =====
 function saveLocal(key, value, enabled) {
@@ -323,13 +481,13 @@ function loadLocal(key) {
 xmlInput.addEventListener("change", (evt) => {
   const files = Array.from(evt.target.files);
   tdfDataList = [];
-  tournamentSelect.innerHTML = '<option value="">Seleccione un torneo</option>';
+  tournamentSelect.innerHTML = `<option value="">${getTranslation("select_tournament_placeholder")}</option>`;
   playerArchetypeMap = {};
   if (files.length === 0) {
     tdfSummary.textContent = "";
     renderPlayers();
     renderMatrix();
-    renderExamples([]);
+    renderExamples("","");
     return;
   }
   let pending = files.length;
@@ -343,10 +501,10 @@ xmlInput.addEventListener("change", (evt) => {
         tdfDataList.forEach((tdf, i) => {
           const opt = document.createElement("option");
           opt.value = String(i);
-          opt.textContent = `${i+1}. ${tdf.name || 'Torneo'}`;
+          opt.textContent = `${i+1}. ${tdf.name || getTranslation('tournament_select_title')}`;
           tournamentSelect.appendChild(opt);
         });
-        tdfSummary.textContent = `Cargados ${tdfDataList.length} torneos.`;
+        tdfSummary.textContent = getTranslation('loaded_tournaments_summary', {count: tdfDataList.length});
         if(tdfDataList.length > 0) tournamentSelect.value = "0";
         renderPlayers();
         renderMatrix(); 
@@ -387,9 +545,7 @@ function refreshArchetypeList() {
     if (Number(idx) === selectedArchIndex) li.classList.add("selected");
     
     let imagePath = arch.image;
-    // Heuristic to check if it's a local server path vs a data URL
     if (imagePath && !imagePath.startsWith('data:image')) {
-        // Assuming a flat structure for archetype_images
         const imageName = imagePath.split(/[\\/]/).pop();
         imagePath = `archetype_images/${imageName}`;
     }
@@ -403,18 +559,18 @@ function refreshArchetypeList() {
     li.appendChild(nameSpan);
 
     li.addEventListener("click", () => {
-      selectedArchIndex = (selectedArchIndex === idx) ? null : idx; // Toggle selection
+      selectedArchIndex = (selectedArchIndex === idx) ? null : idx;
       refreshArchetypeList();
     });
     listEl.appendChild(li);
   });
-  renderPlayers(); // Re-render players to update dropdowns if archetypes change
+  renderPlayers();
 }
 
 document.getElementById("addArchetype").addEventListener("click", () => {
   const name = nameEl.value.trim();
   if (!name || archetypes.some(a => a.name === name)) {
-    alert("El nombre del arquetipo no puede estar vacío o duplicado.");
+    alert(getTranslation("duplicate_archetype_alert"));
     return;
   }
   if (imgEl.files.length > 0) {
@@ -450,9 +606,7 @@ document.getElementById("saveArchetypes").addEventListener("click", () => {
   const blob = new Blob([JSON.stringify(archetypes, null, 2)], {type:"application/json"});
   const url = URL.createObjectURL(blob);
   const a = Object.assign(document.createElement("a"), { href:url, download:"archetypes.json" });
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
   URL.revokeObjectURL(url);
 });
 
@@ -469,7 +623,7 @@ document.getElementById("loadArchetypes").addEventListener("click", () => {
           : data;
         saveLocal("tdf_archetypes", archetypes, persistArchEl.checked);
         refreshArchetypeList();
-      } catch { alert("JSON inválido"); }
+      } catch { alert(getTranslation("invalid_json_alert")); }
     };
     r.readAsText(file);
   };
@@ -496,7 +650,6 @@ function renderPlayers() {
   playersContainer.innerHTML = "";
   const players = allPlayersCurrentTournament();
   const archNames = archetypes.map(a => a.name);
-  // Sort players by name
   const sortedPlayers = Object.values(players).sort((a,b) => a.name.localeCompare(b.name));
 
   sortedPlayers.forEach(p => {
@@ -510,7 +663,7 @@ function renderPlayers() {
     select.className = "form-select form-select-sm";
     select.style.width = "180px";
     select.dataset.userid = p.userid;
-    select.innerHTML = '<option value="">(sin asignar)</option>'; // Empty option first
+    select.innerHTML = `<option value="">${getTranslation("unassigned_option")}</option>`;
     
     archNames.forEach(name => {
       const opt = document.createElement("option");
@@ -536,9 +689,7 @@ document.getElementById("saveAssignments").addEventListener("click", () => {
   const blob = new Blob([JSON.stringify(playerArchetypeMap, null, 2)], {type:"application/json"});
   const url = URL.createObjectURL(blob);
   const a = Object.assign(document.createElement("a"), { href:url, download:"player_archetypes.json" });
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
   URL.revokeObjectURL(url);
 });
 
@@ -552,7 +703,7 @@ document.getElementById("loadAssignments").addEventListener("click", () => {
         playerArchetypeMap = JSON.parse(e.target.result);
         saveLocal("tdf_assignments", playerArchetypeMap, persistAssignEl.checked);
         renderPlayers();
-      } catch { alert("JSON inválido"); }
+      } catch { alert(getTranslation("invalid_json_alert")); }
     };
     r.readAsText(file);
   };
@@ -562,7 +713,7 @@ document.getElementById("loadAssignments").addEventListener("click", () => {
 tournamentSelect.addEventListener("change", () => {
   renderPlayers();
   renderMatrix();
-  renderExamples([]);
+  renderExamples("","");
 });
 
 // ===== Matriz de winrates =====
@@ -579,7 +730,7 @@ function computeMatrixData(tdf) {
     const k = keyFor(a,b);
     if (!stats.has(k)) {
       stats.set(k, { a: k.split("|||")[0], b: k.split("|||")[1],
-        winsA:0, winsB:0, ties:0, mirrors:0, samples:[] });
+        winsA:0, winsB:0, ties:0, mirrors:0 });
     }
     return stats.get(k);
   }
@@ -617,15 +768,15 @@ function renderMatrix() {
   matrixTable.innerHTML = "";
   const idx = Number(tournamentSelect.value);
   if (isNaN(idx) || idx < 0 || idx >= tdfDataList.length) {
-      matrixTable.innerHTML = "<thead><tr><th class='text-muted fw-normal'>Selecciona un torneo para ver la matriz.</th></tr></thead>";
+      matrixTable.innerHTML = `<thead><tr><th class='text-muted fw-normal'>${getTranslation("select_tournament_matrix_placeholder")}</th></tr></thead>`;
       return;
   }
   const tdf = tdfDataList[idx];
 
   const { stats, archs } = computeMatrixData(tdf);
   if (archs.length === 0) {
-    matrixTable.innerHTML = "<thead><tr><th class='text-muted fw-normal'>No hay datos suficientes (asigna arquetipos y aplica filtros).</th></tr></thead>";
-    renderExamples([]);
+    matrixTable.innerHTML = `<thead><tr><th class='text-muted fw-normal'>${getTranslation("no_data_message")}</th></tr></thead>`;
+    renderExamples("","");
     return;
   }
 
@@ -655,13 +806,13 @@ function renderMatrix() {
         const e = getEntry(a1, a2);
         td.textContent = e ? `${e.mirrors}m` : '0m';
         td.style.backgroundColor = "#e9ecef";
-        td.title = `${e ? e.mirrors : 0} mirrors`;
+        td.title = getTranslation('mirrors_title', {count: e ? e.mirrors : 0});
       } else {
         const e = getEntry(a1, a2);
         if (!e) { 
           td.textContent = "0-0-0";
           td.style.backgroundColor = "#f8f9fa";
-          td.title = "0 wins, 0 losses, 0 ties";
+          td.title = getTranslation('win_loss_tie_title', {wins:0, losses:0, ties:0});
         } else {
             const wins = e.a === a1 ? e.winsA : e.winsB;
             const losses = e.a === a1 ? e.winsB : e.winsA;
@@ -672,7 +823,7 @@ function renderMatrix() {
             td.innerHTML = `<div class="fw-bold">${(winrate != null ? (winrate * 100).toFixed(0) : "–")}%</div>
                             <small class="text-muted">${wins}-${losses}-${ties}</small>`;
             td.style.backgroundColor = getWinrateColor(winrate);
-            td.title = `${wins} wins, ${losses} losses, ${ties} ties`;
+            td.title = getTranslation('win_loss_tie_title', {wins, losses, ties});
         }
       }
 
@@ -701,19 +852,17 @@ function showExamplesForCell(a1, a2) {
 
     if (a1 === a2) {
         if (p1.archetype === a1 && p2.archetype === a2) {
-            let result = "Tie";
-            if (m.outcome === "1") result = "P1 Win";
-            if (m.outcome === "2") result = "P2 Win";
+            let result = getTranslation('tie_result');
+            if (m.outcome === "1") result = getTranslation('p1_win_result');
+            if (m.outcome === "2") result = getTranslation('p2_win_result');
             rows.push([p1.name, p1.archetype, p2.name, p2.archetype, result, m.roundNum]);
         }
     } else {
-        const p1isA1 = p1.archetype === a1;
-        const p2isA2 = p2.archetype === a2;
-        const p1isA2 = p1.archetype === a2;
-        const p2isA1 = p2.archetype === a1;
+        const p1isA1 = p1.archetype === a1, p2isA2 = p2.archetype === a2;
+        const p1isA2 = p1.archetype === a2, p2isA1 = p2.archetype === a1;
 
         if ((p1isA1 && p2isA2) || (p1isA2 && p2isA1)) {
-            let outcomeText = "Tie";
+            let outcomeText = getTranslation('tie_result');
             if (m.outcome === "1") outcomeText = `${p1.name} Wins`;
             if (m.outcome === "2") outcomeText = `${p2.name} Wins`;
             rows.push([p1.name, p1.archetype, p2.name, p2.archetype, outcomeText, m.roundNum]);
@@ -728,11 +877,12 @@ function renderExamples(rows, a1, a2) {
   const thead = examplesTable.createTHead();
   const caption = examplesTable.createCaption();
   caption.classList.add('caption-top', 'h4');
-  caption.textContent = `Partidas de ejemplo: ${a1} vs ${a2}`;
+  caption.textContent = getTranslation('example_matches_caption', {a1: a1, a2: a2});
   
   const h = thead.insertRow();
-  ["Player 1","Archetype 1","Player 2","Archetype 2","Result","Round"].forEach(t => {
-    h.insertCell().outerHTML = `<th>${t}</th>`;
+  const headers = ['player_1_header', 'archetype_1_header', 'player_2_header', 'archetype_2_header', 'result_header', 'round_header'];
+  headers.forEach(key => {
+    h.insertCell().outerHTML = `<th>${getTranslation(key)}</th>`;
   });
   
   const tbody = examplesTable.createTBody();
@@ -740,7 +890,7 @@ function renderExamples(rows, a1, a2) {
     const tr = tbody.insertRow();
     const td = tr.insertCell();
     td.colSpan = 6;
-    td.textContent = "No hay ejemplos para esta combinación de filtros.";
+    td.textContent = getTranslation("no_examples_message");
     td.classList.add("text-center", "text-muted");
   } else {
     rows.forEach(r => {
@@ -750,10 +900,11 @@ function renderExamples(rows, a1, a2) {
   }
 }
 
-// ===== Initial Render =====
-renderPlayers();
-renderMatrix();
-renderExamples("", "");
+// ===== Initial Load =====
+document.addEventListener('DOMContentLoaded', () => {
+    const preferredLang = localStorage.getItem('preferred_language') || 'en';
+    setLanguage(preferredLang);
+});
 </script>
 </body>
 </html>
